@@ -28,7 +28,8 @@ export default function Header() {
           >
             Maquinaria
           </Button>
-          <Button as={NavLink} to="/">
+          <Button as={NavLink} to="/"
+          className="bg-black text-white rounded hover:bg-gray-900 transition ${className}">
             Inicio
           </Button>
           

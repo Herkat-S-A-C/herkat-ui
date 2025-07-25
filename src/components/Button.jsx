@@ -7,7 +7,7 @@ function Button({ children, onClick, className = "", as, to, ...props }) {
     <Component
       to={to}
       onClick={onClick}
-      className={`bg-black text-white px-4 py-2 rounded hover:bg-gray-900 transition ${className}`}
+      className={`px-4 py-2 rounded transition ${className}`}
       {...props}
     >
       {children}

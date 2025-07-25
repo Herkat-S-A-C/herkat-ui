@@ -1,13 +1,20 @@
-// src/components/CardItem.jsx
-
-function CardItem({ title, description, image }) {
+function CardItem({ image, title, description }) {
   return (
-<div className="border border-orange-300 rounded-md p-4 text-center hover:shadow-md transition duration-300">
-<img src = {image} alt={title} className="w-24 h-24 mx-auto mb-2 object-contain" />
-<h3 className="font-semibold text-md">{title}</h3>
-<p className="text-sm text-gray-500">{description}</p>
-</div>
-);
+    <div className="bg-white rounded-lg border p-4 w-60 text-center shadow-sm hover:shadow-md transition-all duration-300">
+      {/* Contenedor cuadrado para la imagen */}
+      <div className="w-full aspect-square  rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-contain"
+        />
+      </div>
+
+      {/* Título y descripción */}
+      <h3 className="text-base font-medium text-gray-800">{title}</h3>
+      <p className="text-sm text-gray-500">{description}</p>
+    </div>
+  );
 }
 
-export default CardItem; // 👈 Esto es obligatorio si lo importas como "import CardItem from ..."
+export default CardItem;
