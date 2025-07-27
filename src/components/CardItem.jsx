@@ -1,18 +1,19 @@
-function CardItem({ image, title, description }) {
+function CardItem({ title, description, image }) {
   return (
-    <div className="bg-white rounded-lg border p-4 w-60 text-center shadow-sm hover:shadow-md transition-all duration-300">
-      {/* Contenedor cuadrado para la imagen */}
-      <div className="w-full aspect-square  rounded-lg overflow-hidden mb-3 flex items-center justify-center">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-full object-contain"
-        />
+    <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-80">
+      <img
+        src={image}
+        alt={title}
+        className="h-40 w-full object-cover"
+      />
+      <div className="p-4 flex flex-col justify-between flex-1">
+        <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 h-[3.5rem]">
+          {title}
+        </h3>
+        <p className="text-sm text-gray-600 mt-2 line-clamp-4 h-[5rem]">
+          {description}
+        </p>
       </div>
-
-      {/* Título y descripción */}
-      <h3 className="text-base font-medium text-gray-800">{title}</h3>
-      <p className="text-sm text-gray-500">{description}</p>
     </div>
   );
 }
