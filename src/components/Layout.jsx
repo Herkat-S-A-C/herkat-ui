@@ -1,14 +1,16 @@
 import Header from "./Header";
 import Footer from "./Footer";
+import ButtonWhatsApp from "../components/ButtonWhatsApp";
 
 function Layout({ children }) {
-return (
-<>
-<Header />
-<main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
-<Footer />
-</>
-);
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Header />
+      <main className="flex-grow w-full">{children}</main>
+      <ButtonWhatsApp/>
+      <Footer />
+    </div>
+  );
 }
 
 export default Layout;

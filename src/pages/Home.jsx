@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import CardItem from "../components/CardItem";
 import Footer from "../components/Footer";
 import Banner from "../components/banner";
+import ButtonWhatsApp from "../components/ButtonWhatsApp";
 import {
   productos,
   servicios,
@@ -33,17 +34,23 @@ function Home() {
   };
 
   // ✅ Filtrar productos y maquinarias destacados
-  const productosDestacados = productos.filter(item => item.destacado === "si");
-  const maquinariaDestacada = maquinaria.filter(item => item.destacado === "si");
-  const serviciosDestacados = servicios.filter(item => item.destacado === "si");
+  const productosDestacados = productos.filter(
+    (item) => item.destacado === "si"
+  );
+  const maquinariaDestacada = maquinaria.filter(
+    (item) => item.destacado === "si"
+  );
+  const serviciosDestacados = servicios.filter(
+    (item) => item.destacado === "si"
+  );
 
   return (
-    <div>
+    <div className=" bg-gray-100">
       <Header />
       <Banner images={banner} currentIndex={currentIndex} />
 
       {/* Productos */}
-      <section className="mt-12 px-6 relative">
+      <section className="mt-12 px-6 relative bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Productos destacados
         </h2>
@@ -58,7 +65,10 @@ function Home() {
           className="flex overflow-x-auto gap-4 scroll-smooth transition-transform duration-500 ease-in-out no-scrollbar"
         >
           {productosDestacados.map((item) => (
-            <div key={item.id} className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]">
+            <div
+              key={item.id}
+              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]"
+            >
               <CardItem
                 title={item.title}
                 description={item.description}
@@ -76,7 +86,7 @@ function Home() {
       </section>
 
       {/* Servicios */}
-      <section className="mt-2 px-[100px]">
+      <section className="mt-2 px-[100px]  bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Servicios destacados
         </h2>
@@ -94,7 +104,7 @@ function Home() {
       </section>
 
       {/* Maquinarias */}
-      <section className="mt-2 px-6 relative">
+      <section className="mt-2 px-6 relative  bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Maquinarias destacadas
         </h2>
@@ -109,7 +119,10 @@ function Home() {
           className="flex overflow-x-auto gap-4 scroll-smooth transition-transform duration-500 ease-in-out no-scrollbar"
         >
           {maquinariaDestacada.map((item) => (
-            <div key={item.id} className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]">
+            <div
+              key={item.id}
+              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]"
+            >
               <CardItem
                 title={item.title}
                 description={item.description}
@@ -125,7 +138,7 @@ function Home() {
           <FaChevronRight className="text-blue-800" />
         </button>
       </section>
-
+      <ButtonWhatsApp/>
       <Footer />
     </div>
   );
