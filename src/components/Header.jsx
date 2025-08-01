@@ -9,21 +9,21 @@ export default function Header() {
         <nav className="flex gap-4 items-center">
           <Button
             as={NavLink}
-            to="/catalogo/products"
+            to="/catalogo/productos"
             className="bg-transparent font-semibold text-white hover:text-gray-700 hover:bg-transparent"
           >
             Productos
           </Button>
           <Button
             as={NavLink}
-            to="/catalogo/services"
+            to="/catalogo/servicios"
             className="bg-transparent font-semibold text-white hover:text-gray-700 hover:bg-transparent"
           >
             Servicios
           </Button>
           <Button
             as={NavLink}
-            to="/catalogo/machinery"
+            to="/catalogo/maquinaria"
             className="bg-transparent font-semibold text-white hover:text-gray-700 hover:bg-transparent"
           >
             Maquinaria
