@@ -10,9 +10,9 @@ function Catalog() {
   const { tipo } = useParams();
 
   const dataMap = {
-    products: productos,
-    services: servicios,
-    machinery: maquinaria,
+    productos: productos,
+    servicios: servicios,
+    maquinaria: maquinaria,
   };
 
   const items = dataMap[tipo] || [];

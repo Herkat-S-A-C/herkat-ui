@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import CardItem from "../components/CardItem";
 import Footer from "../components/Footer";
-import Banner from "../components/banner";
+import Banner from "../components/Banner";
 import ButtonWhatsApp from "../components/ButtonWhatsApp";
 import {
   productos,
