@@ -38,7 +38,7 @@ function Catalog() {
         <h1 className="text-3xl font-bold mb-6 capitalize px-6 pt-8">{tipo}</h1>
 
         {items.length > 0 ? (
-          tipo === "services" ? (
+          tipo === "servicios" ? (
             <div className="grid grid-cols-1 gap-4 px-[100px]">
               {items.map((item) => (
                 <CardServices
