@@ -2,24 +2,24 @@ import Layout from "../components/Layout";
 import CardItem from "../components/CardItem";
 import CardServices from "../components/CardServices";
 import { useParams } from "react-router-dom";
-import { productos, servicios, maquinaria } from "../constants/dataItems.js";
+import { products, services, machinery } from "../constants/dataItems.js";
 import { useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 function Catalog() {
-  const { tipo } = useParams();
+  const { type } = useParams();
 
   const dataMap = {
-    productos: productos,
-    servicios: servicios,
-    maquinaria: maquinaria,
+    productos: products,
+    servicios: services,
+    maquinaria: machinery,
   };
 
-  const items = dataMap[tipo] || [];
+  const items = dataMap[type] || [];
 
   const groupedItems = items.reduce((acc, item) => {
-    acc[item.tipo] = acc[item.tipo] || [];
-    acc[item.tipo].push(item);
+    acc[item.type] = acc[item.type] || [];
+    acc[item.type].push(item);
     return acc;
   }, {});
 
@@ -35,10 +35,10 @@ function Catalog() {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-100">
-        <h1 className="text-3xl font-bold mb-6 capitalize px-6 pt-8">{tipo}</h1>
+        <h1 className="text-3xl font-bold mb-6 capitalize px-6 pt-8">{type}</h1>
 
         {items.length > 0 ? (
-          tipo === "servicios" ? (
+          type === "servicios" ? (
             <div className="grid grid-cols-1 gap-4 px-[100px]">
               {items.map((item) => (
                 <CardServices

@@ -3,12 +3,7 @@ import CardItem from "../components/CardItem";
 import Footer from "../components/Footer";
 import Banner from "../components/Banner";
 import ButtonWhatsApp from "../components/ButtonWhatsApp";
-import {
-  productos,
-  servicios,
-  maquinaria,
-  banner,
-} from "../constants/dataStatic";
+import {products, services, machinery, banner,} from "../constants/dataItems";
 import { useEffect, useState } from "react";
 import CardServices from "../components/CardServices";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -34,13 +29,13 @@ function Home() {
   };
 
   // ✅ Filtrar productos y maquinarias destacados
-  const productosDestacados = productos.filter(
+  const productosDestacados = products.filter(
     (item) => item.destacado === "si"
   );
-  const maquinariaDestacada = maquinaria.filter(
+  const maquinariaDestacada = machinery.filter(
     (item) => item.destacado === "si"
   );
-  const serviciosDestacados = servicios.filter(
+  const serviciosDestacados = services.filter(
     (item) => item.destacado === "si"
   );
 
