@@ -3,7 +3,7 @@ import CardItem from "../components/CardItem";
 import Footer from "../components/Footer";
 import Banner from "../components/Banner";
 import ButtonWhatsApp from "../components/ButtonWhatsApp";
-import {products, services, machinery, banner,} from "../constants/dataItems";
+import { products, services, machinery, banner } from "../constants/dataItems";
 import { useEffect, useState } from "react";
 import CardServices from "../components/CardServices";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -28,7 +28,6 @@ function Home() {
     container.scrollBy({ left: 200, behavior: "smooth" });
   };
 
-  // ✅ Filtrar productos y maquinarias destacados
   const productosDestacados = products.filter(
     (item) => item.outstanding === "si"
   );
@@ -40,7 +39,7 @@ function Home() {
   );
 
   return (
-    <div className=" bg-gray-100">
+    <div className="bg-gray-100">
       <Header />
       <Banner images={banner} currentIndex={currentIndex} />
 
@@ -81,7 +80,7 @@ function Home() {
       </section>
 
       {/* Servicios */}
-      <section className="mt-2 px-[100px]  bg-gray-100">
+      <section className="mt-2 px-[100px] bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Servicios destacados
         </h2>
@@ -89,17 +88,17 @@ function Home() {
           {serviciosDestacados.map((item) => (
             <CardServices
               key={item.id}
+              image={item.image}
               title={item.title}
               description={item.description}
-              image={item.image}
-              reverse={item.id % 2 === 0}
+              reverse={item.left === "no"}
             />
           ))}
         </div>
       </section>
 
       {/* Maquinarias */}
-      <section className="mt-2 px-6 relative  bg-gray-100">
+      <section className="mt-2 px-6 relative bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Maquinarias destacadas
         </h2>
@@ -133,7 +132,8 @@ function Home() {
           <FaChevronRight className="text-blue-800" />
         </button>
       </section>
-      <ButtonWhatsApp/>
+
+      <ButtonWhatsApp />
       <Footer />
     </div>
   );

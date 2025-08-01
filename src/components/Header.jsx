@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import Button from "./Button";
+import loginIcon from "../assets/icons/login.png";
 
 export default function Header() {
   return (
@@ -39,7 +40,7 @@ export default function Header() {
             className="p-1 bg-transparent hover:bg-transparent"
           >
             <img
-              src="/src/assets/icons/login.png"
+              src={loginIcon}
               alt="Iniciar sesión"
               className="w-8 h-8 object-contain"
             />

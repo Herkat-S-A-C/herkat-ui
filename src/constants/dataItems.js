@@ -1,17 +1,20 @@
 export const banner = [
-    { 
-        id: 1, 
-        image: "https://i.ibb.co/C3GjBtm9/banner.png"
-    },
-    { 
-        id: 2, 
-        image: "https://img.freepik.com/vector-gratis/plantilla-banner-horizontal-degradado-evento-buen-fin-espanol_23-2150810851.jpg?semt=ais_hybrid&w=740" 
-    },
-    {
-        id: 3,
-        image: "https://img.freepik.com/vector-gratis/plantilla-banner-horizontal-degradado-ventas-buen-fin-mexicano_52683-140643.jpg?semt=ais_items_boosted&w=740"
-    }
+  {
+    id: 1,
+    image: "https://i.ibb.co/C3GjBtm9/banner.png"
+  },
+  {
+    id: 2,
+    image: "https://img.freepik.com/vector-gratis/plantilla-banner-horizontal-degradado-evento-buen-fin-espanol_23-2150810851.jpg?semt=ais_hybrid&w=740"
+  },
+  {
+    id: 3,
+    image: "https://img.freepik.com/vector-gratis/plantilla-banner-horizontal-degradado-ventas-buen-fin-mexicano_52683-140643.jpg?semt=ais_items_boosted&w=740"
+  }
 ];
+
+
+
 export const products = [
   // Botellas
   {
@@ -28,7 +31,7 @@ export const products = [
     description: "Botella PET azul de 1 litro.",
     image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
     type: "botella",
-    outstanding: "no"
+    outstanding: "si"
   },
   {
     id: 3,
@@ -36,7 +39,7 @@ export const products = [
     description: "Botella PET gris de 2 litros.",
     image: "https://us.123rf.com/450wm/jckca/jckca0804/jckca080400006/2813992-empty-two-liter-bottle-on-white.jpg",
     type: "botella",
-    outstanding: "no"
+    outstanding: "si"
   },
 
   // Tapas
@@ -44,7 +47,7 @@ export const products = [
     id: 4,
     title: "Tapa Rosca Azul",
     description: "Tapa para botella estándar de rosca color azul.",
-    image: "https://cdn-icons-png.flaticon.com/512/1073/1073873.png",
+    image: "https://envasesyplasticosuperior.com/wp-content/uploads/2023/12/TAPA-28-MM-AZUL-BIC-800x799-1.jpg",
     type: "tapa",
     outstanding: "si"
   },
@@ -52,9 +55,9 @@ export const products = [
     id: 5,
     title: "Tapa Rosca Blanca",
     description: "Tapa estándar color blanco, segura y hermética.",
-    image: "https://cdn-icons-png.flaticon.com/512/1073/1073893.png",
+    image: "https://soloenvases.com/wp-content/uploads/2023/06/0024TPBL28.jpg",
     type: "tapa",
-    outstanding: "no"
+    outstanding: "si"
   },
 
   // Envases
@@ -62,7 +65,7 @@ export const products = [
     id: 6,
     title: "Envase 5L",
     description: "Envase PET de 5 litros, ideal para químicos.",
-    image: "https://cdn-icons-png.flaticon.com/512/146/146306.png",
+    image: "https://www.perezlinares.com/wp-content/uploads/2024/09/15-JERRYCAN-ENVASE-5-LITROS-BLANCO-300x300.jpg",
     type: "envase",
     outstanding: "si"
   },
@@ -70,93 +73,123 @@ export const products = [
     id: 7,
     title: "Envase 10L Industrial",
     description: "Envase resistente para líquidos industriales.",
-    image: "https://cdn-icons-png.flaticon.com/512/146/146345.png",
+    image: "https://www.envases.mx/media/2834/product-range-extension530x354_4.jpg",
     type: "envase",
-    outstanding: "no"
+    outstanding: "si"
   },
   {
     id: 8,
     title: "Botella Deportiva",
     description: "Botella plástica para uso deportivo, ligera.",
-    image: "https://cdn-icons-png.flaticon.com/512/2917/2917990.png",
+    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
     type: "botella",
-    outstanding: "no"
+    outstanding: "si"
+  },
+  {
+    id: 9,
+    title: "Botella Deportiva",
+    description: "Botella plástica para uso deportivo, ligera.",
+    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
+    type: "botella",
+    outstanding: "si"
+  },
+  {
+    id: 10,
+    title: "Botella Deportiva",
+    description: "Botella plástica para uso deportivo, ligera.",
+    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
+    type: "botella",
+    outstanding: "si"
   }
 ];
+
+
 
 export const services = [
   {
     id: 1,
     title: "Diseño de Moldes",
     description: "Creamos moldes personalizados para tus productos.",
-    image: "https://cdn-icons-png.flaticon.com/512/3064/3064197.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "diseño",
-    outstanding: "si"
+    outstanding: "si",
+    left: "sí"
   },
   {
     id: 2,
     title: "Diseño de Etiquetas",
     description: "Diseñamos etiquetas con identidad de marca.",
-    image: "https://cdn-icons-png.flaticon.com/512/2422/2422795.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "diseño",
-    outstanding: "no"
+    outstanding: "si",
+    left: "no"
   },
   {
     id: 3,
     title: "Servicio de Envasado",
     description: "Envasado profesional de líquidos o sólidos.",
-    image: "https://cdn-icons-png.flaticon.com/512/2965/2965567.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "envasado",
-    outstanding: "si"
+    outstanding: "si",
+    left: "sí"
   },
   {
     id: 4,
     title: "Sellado Hermético",
     description: "Sellado al vacío o con calor para conservación.",
-    image: "https://cdn-icons-png.flaticon.com/512/2965/2965575.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "envasado",
-    outstanding: "no"
+    outstanding: "si",
+    left: "no"
   },
   {
     id: 5,
     title: "Distribución Local",
     description: "Entregas puntuales en Lima y alrededores.",
-    image: "https://cdn-icons-png.flaticon.com/512/3033/3033143.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
+
     type: "logística",
-    outstanding: "si"
+    outstanding: "si",
+    left: "sí"
   },
   {
     id: 6,
     title: "Transporte Nacional",
     description: "Cobertura a todo el país en 48 horas.",
-    image: "https://cdn-icons-png.flaticon.com/512/2857/2857452.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
+
     type: "logística",
-    outstanding: "no"
+    outstanding: "si",
+    left: "no"
   },
   {
     id: 7,
     title: "Empaque y Embalaje",
     description: "Preparación profesional de tus productos para envío.",
-    image: "https://cdn-icons-png.flaticon.com/512/1747/1747170.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "logística",
-    outstanding: "no"
+    outstanding: "no",
+    left: "sí"
   },
   {
     id: 8,
     title: "Almacenamiento",
     description: "Servicio de almacenamiento temporal o permanente.",
-    image: "https://cdn-icons-png.flaticon.com/512/3369/3369324.png",
+    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "logística",
-    outstanding: "no"
+    outstanding: "si",
+    left: "si"
   }
 ];
+
+
 
 export const machinery = [
   {
     id: 1,
     title: "Sopladora Automática",
     description: "Máquina para fabricar botellas desde preformas.",
-    image: "https://cdn-icons-png.flaticon.com/512/2602/2602057.png",
+    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
     type: "sopladora",
     outstanding: "si"
   },
@@ -164,7 +197,7 @@ export const machinery = [
     id: 2,
     title: "Mini Sopladora Manual",
     description: "Versión compacta y operada manualmente.",
-    image: "https://cdn-icons-png.flaticon.com/512/2496/2496862.png",
+    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
     type: "sopladora",
     outstanding: "no"
   },
@@ -172,7 +205,7 @@ export const machinery = [
     id: 3,
     title: "Selladora de Banda",
     description: "Sellado automático de envases en línea.",
-    image: "https://cdn-icons-png.flaticon.com/512/2942/2942529.png",
+    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
     type: "selladora",
     outstanding: "no"
   },
@@ -180,7 +213,7 @@ export const machinery = [
     id: 4,
     title: "Selladora de Inducción",
     description: "Sellado hermético para tapas con inducción.",
-    image: "https://cdn-icons-png.flaticon.com/512/3081/3081545.png",
+    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
     type: "selladora",
     outstanding: "si"
   },
@@ -188,7 +221,7 @@ export const machinery = [
     id: 5,
     title: "Impresora de Etiquetas",
     description: "Impresora térmica para etiquetas de productos.",
-    image: "https://cdn-icons-png.flaticon.com/512/3376/3376682.png",
+    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
     type: "impresora",
     outstanding: "no"
   },
@@ -196,7 +229,7 @@ export const machinery = [
     id: 6,
     title: "Impresora de Códigos QR",
     description: "Ideal para seguimiento y trazabilidad.",
-    image: "https://cdn-icons-png.flaticon.com/512/2942/2942675.png",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
     type: "impresora",
     outstanding: "si"
   },
@@ -204,7 +237,7 @@ export const machinery = [
     id: 7,
     title: "Dosificadora de Líquidos",
     description: "Precisión en el llenado de botellas.",
-    image: "https://cdn-icons-png.flaticon.com/512/2602/2602086.png",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
     type: "sopladora",
     outstanding: "no"
   },
@@ -212,7 +245,7 @@ export const machinery = [
     id: 8,
     title: "Moldeadora de Tapas",
     description: "Equipo para moldear tapas plásticas.",
-    image: "https://cdn-icons-png.flaticon.com/512/2765/2765626.png",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
     type: "selladora",
     outstanding: "no"
   }

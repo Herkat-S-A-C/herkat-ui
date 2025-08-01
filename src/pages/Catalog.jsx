@@ -15,7 +15,7 @@ function Catalog() {
     maquinaria: machinery,
   };
 
-  const items = dataMap[type] || [];
+  const items = dataMap[type?.toLowerCase()] || [];
 
   const groupedItems = items.reduce((acc, item) => {
     acc[item.type] = acc[item.type] || [];
@@ -86,7 +86,6 @@ function Catalog() {
                       </div>
                     ))}
                   </div>
-
                   {/* Botón derecho */}
                   <button
                     onClick={() => scroll(subtipo, 1)}
@@ -99,7 +98,9 @@ function Catalog() {
             </>
           )
         ) : (
-          <p className="text-gray-500 px-6">No hay elementos en esta categoría.</p>
+          <p className="text-gray-500 px-6">
+            No hay elementos en esta categoría.
+          </p>
         )}
       </div>
     </Layout>

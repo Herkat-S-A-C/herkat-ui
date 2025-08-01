@@ -15,7 +15,7 @@ function AppRouter() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/catalogo/:tipo" element={<Catalog />} />
+        <Route path="/catalogo/:type" element={<Catalog />} />
         <Route path="/detalle/:id" element={<DetalleItem />} />
       </Routes>
     </Router>
