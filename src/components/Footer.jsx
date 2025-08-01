@@ -10,6 +10,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-600 hover:text-blue-600 transition"
+            title="Facebook"
           >
             <FaFacebookF size={20} />
           </a>
@@ -18,13 +19,14 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-600 hover:text-pink-500 transition"
+            title="Instagram"
           >
             <FaInstagram size={20} />
           </a>
           <a
             href="mailto:herkat.contacto@gmail.com"
             className="text-gray-600 hover:text-red-500 transition"
-            title="Enviar correo"
+            title="Correo electrónico"
           >
             <FaEnvelope size={20} />
           </a>

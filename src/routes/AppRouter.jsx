@@ -3,11 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import DetalleItem from '../pages/DetailItem';
 import Catalog from '../pages/Catalog';
-/*
 import Login from '../pages/Login';
+/*
 import NotFound from '../pages/NotFound';
 
-<Route path="/login" element={<Login />} />
 <Route path="*" element={<NotFound />} />
 */ 
 function AppRouter() {
@@ -17,6 +16,7 @@ function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/catalogo/:type" element={<Catalog />} />
         <Route path="/detalle/:id" element={<DetalleItem />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

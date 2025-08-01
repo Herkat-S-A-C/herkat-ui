@@ -6,10 +6,11 @@ import ButtonWhatsApp from "../components/ButtonWhatsApp";
 import { products, services, machinery, banner } from "../constants/dataItems";
 import { useEffect, useState } from "react";
 import CardServices from "../components/CardServices";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
 
 function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,40 +29,59 @@ function Home() {
     container.scrollBy({ left: 200, behavior: "smooth" });
   };
 
-  const productosDestacados = products.filter(
-    (item) => item.outstanding === "si"
-  );
-  const maquinariaDestacada = machinery.filter(
-    (item) => item.outstanding === "si"
-  );
-  const serviciosDestacados = services.filter(
-    (item) => item.outstanding === "si"
-  );
+  const productosDestacados = products.filter(item => item.outstanding === "si");
+  const maquinariaDestacada = machinery.filter(item => item.outstanding === "si");
+  const serviciosDestacados = services.filter(item => item.outstanding === "si");
+
+  const openModal = (item) => setSelectedItem(item);
+  const closeModal = () => setSelectedItem(null);
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 overflow-x-hidden">
       <Header />
       <Banner images={banner} currentIndex={currentIndex} />
 
+      {/* Modal */}
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full relative shadow-lg">
+            <button
+              onClick={closeModal}
+              className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+            >
+              <FaTimes size={20} />
+            </button>
+            <img
+              src={selectedItem.image}
+              alt={selectedItem.title}
+              className="w-full h-64 object-cover rounded mb-4"
+            />
+            <h3 className="text-xl font-semibold mb-2">{selectedItem.title}</h3>
+            <p className="text-gray-600">{selectedItem.description}</p>
+          </div>
+        </div>
+      )}
+
       {/* Productos */}
-      <section className="mt-12 px-6 relative bg-gray-100">
+      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] relative bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Productos destacados
         </h2>
         <button
           onClick={() => scrollLeft("productos")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 flex items-center justify-center z-10"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
         <div
           id="productos"
-          className="flex overflow-x-auto gap-4 scroll-smooth transition-transform duration-500 ease-in-out no-scrollbar"
+          className="flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full"
         >
           {productosDestacados.map((item) => (
             <div
               key={item.id}
-              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]"
+              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer"
+              onClick={() => openModal(item)}
             >
               <CardItem
                 title={item.title}
@@ -73,18 +93,18 @@ function Home() {
         </div>
         <button
           onClick={() => scrollRight("productos")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 flex items-center justify-center z-10"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
         >
           <FaChevronRight className="text-blue-800" />
         </button>
       </section>
 
       {/* Servicios */}
-      <section className="mt-2 px-[100px] bg-gray-100">
+      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Servicios destacados
         </h2>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 gap-6">
           {serviciosDestacados.map((item) => (
             <CardServices
               key={item.id}
@@ -98,24 +118,25 @@ function Home() {
       </section>
 
       {/* Maquinarias */}
-      <section className="mt-2 px-6 relative bg-gray-100">
+      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] relative bg-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Maquinarias destacadas
         </h2>
         <button
           onClick={() => scrollLeft("maquinarias")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 flex items-center justify-center z-10"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
         <div
           id="maquinarias"
-          className="flex overflow-x-auto gap-4 scroll-smooth transition-transform duration-500 ease-in-out no-scrollbar"
+          className="flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full"
         >
           {maquinariaDestacada.map((item) => (
             <div
               key={item.id}
-              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]"
+              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer"
+              onClick={() => openModal(item)}
             >
               <CardItem
                 title={item.title}
@@ -127,7 +148,7 @@ function Home() {
         </div>
         <button
           onClick={() => scrollRight("maquinarias")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 flex items-center justify-center z-10"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
         >
           <FaChevronRight className="text-blue-800" />
         </button>

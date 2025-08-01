@@ -244,9 +244,9 @@ export const machinery = [
   {
     id: 8,
     title: "Moldeadora de Tapas",
-    description: "Equipo para moldear tapas plásticas.",
+    description: "La Moldeadora de Tapas Plásticas es un equipo industrial diseñado para la fabricación eficiente y uniforme de tapas de plástico, utilizadas comúnmente en botellas, envases y otros recipientes. Su tecnología avanzada permite un proceso de moldeado preciso, garantizando un sellado seguro y resistente que cumple con los estándares de calidad del sector. Este equipo es ideal para empresas del rubro de embalaje, envasado, fabricación de productos plásticos, alimentario y farmacéutico, donde se requiere producción en serie con alta eficiencia.",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
     type: "selladora",
-    outstanding: "no"
+    outstanding: "si"
   }
 ];

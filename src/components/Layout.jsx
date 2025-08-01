@@ -6,8 +6,8 @@ function Layout({ children }) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
-      <main className="flex-grow w-full">{children}</main>
-      <ButtonWhatsApp/>
+      <main className="flex-grow w-full overflow-x-hidden">{children}</main>
+      <ButtonWhatsApp />
       <Footer />
     </div>
   );
