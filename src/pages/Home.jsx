@@ -30,13 +30,13 @@ function Home() {
 
   // ✅ Filtrar productos y maquinarias destacados
   const productosDestacados = products.filter(
-    (item) => item.destacado === "si"
+    (item) => item.outstanding === "si"
   );
   const maquinariaDestacada = machinery.filter(
-    (item) => item.destacado === "si"
+    (item) => item.outstanding === "si"
   );
   const serviciosDestacados = services.filter(
-    (item) => item.destacado === "si"
+    (item) => item.outstanding === "si"
   );
 
   return (
