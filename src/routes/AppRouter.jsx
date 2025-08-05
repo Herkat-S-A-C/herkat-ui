@@ -4,7 +4,9 @@ import Home from '../pages/Home';
 import DetalleItem from '../pages/DetailItem';
 import Catalog from '../pages/Catalog';
 import Login from '../pages/Login';
-import AdminPage from '../pages/admin/adminPages';
+import AdminPage from '../pages/admin/AdminPages';
+
+/*Rutas*/ 
 function AppRouter() {
   return (
     <Router>
