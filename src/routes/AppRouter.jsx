@@ -4,6 +4,7 @@ import Home from '../pages/Home';
 import DetalleItem from '../pages/DetailItem';
 import Catalog from '../pages/Catalog';
 import Login from '../pages/Login';
+import AdminPage from '../pages/admin/adminPages';
 /*
 import NotFound from '../pages/NotFound';
 
@@ -17,6 +18,7 @@ function AppRouter() {
         <Route path="/catalogo/:type" element={<Catalog />} />
         <Route path="/detalle/:id" element={<DetalleItem />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </Router>
   );

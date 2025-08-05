@@ -178,7 +178,7 @@ export const services = [
     image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
     type: "logística",
     outstanding: "si",
-    left: "si"
+    left: "no"
   }
 ];
 

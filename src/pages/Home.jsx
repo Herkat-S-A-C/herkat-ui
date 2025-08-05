@@ -1,3 +1,4 @@
+// ...importaciones
 import Header from "../components/Header";
 import CardItem from "../components/CardItem";
 import Footer from "../components/Footer";
@@ -152,6 +153,25 @@ function Home() {
         >
           <FaChevronRight className="text-blue-800" />
         </button>
+      </section>
+
+      {/* Ubicación / Mapa */}
+      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          ¿Dónde estamos ubicados?
+        </h2>
+        <div className="w-full h-96 rounded-md overflow-hidden shadow-lg">
+          <iframe
+            title="Ubicación del local"
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3902.4214076270105!2d-76.96286052493942!3d-12.014482988219758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDAwJzUyLjEiUyA3NsKwNTcnMzcuMCJX!5e0!3m2!1ses!2spe!4v1754349773753!5m2!1ses!2spe" 
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
       </section>
 
       <ButtonWhatsApp />
