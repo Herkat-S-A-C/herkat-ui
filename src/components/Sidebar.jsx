@@ -12,7 +12,7 @@ const Sidebar = ({ selected, setSelected }) => {
     <div className="w-40 bg-gray-800 text-white flex flex-col justify-between h-screen sticky top-0">
       {/* Sección superior */}
       <div>
-        <h2 className="text-2xl font-bold p-4">Admin</h2>
+        <h2 className="text-2xl font-bold p-4">Gestión</h2>
         <ul>
           <li
             className={`p-4 cursor-pointer hover:bg-gray-700 ${
