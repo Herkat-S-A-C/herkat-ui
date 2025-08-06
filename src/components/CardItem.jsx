@@ -1,6 +1,8 @@
 function CardItem({ title, description, image }) {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-80 cursor-pointer">
+    <div
+      className="relative z-10 bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-80 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:ring-2 hover:ring-indigo-400 hover:bg-gray-50 hover:scale-[1.03] hover:-rotate-x-1 hover:rotate-y-1 transform perspective-[1000px]"
+    >
       <img
         src={image}
         alt={title}

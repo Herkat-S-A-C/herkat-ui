@@ -13,7 +13,11 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
         {/* Logo */}
         <NavLink to="/" className="flex items-center">
-          <img src={Logo} alt="HerKat Logo" className="w-10 h-auto object-contain" />
+          <img
+            src={Logo}
+            alt="HerKat Logo"
+            className="w-10 h-auto object-contain"
+          />
         </NavLink>
 
         {/* Botón hamburguesa (visible en móvil) */}
@@ -27,42 +31,97 @@ export default function Header() {
 
         {/* Navegación - Escritorio */}
         <nav className="hidden sm:flex gap-4 items-center">
-          <Button as={NavLink} to="/catalogo/productos" className="bg-transparent font-semibold text-white hover:text-gray-300">
+          <Button
+            as={NavLink}
+            to="/catalogo/productos"
+            className="bg-white text-blue-700 font-semibold hover:bg-gray-200"
+          >
             Productos
           </Button>
-          <Button as={NavLink} to="/catalogo/servicios" className="bg-transparent font-semibold text-white hover:text-gray-300">
+          <Button
+            as={NavLink}
+            to="/catalogo/servicios"
+            className="bg-white text-blue-700 font-semibold hover:bg-gray-200"
+          >
             Servicios
           </Button>
-          <Button as={NavLink} to="/catalogo/maquinaria" className="bg-transparent font-semibold text-white hover:text-gray-300">
+          <Button
+            as={NavLink}
+            to="/catalogo/maquinaria"
+            className="bg-white text-blue-700 font-semibold hover:bg-gray-200"
+          >
             Maquinaria
           </Button>
-          <Button as={NavLink} to="/" className="bg-black text-white rounded hover:bg-gray-900 transition">
+          <Button
+            as={NavLink}
+            to="/"
+            className="bg-black text-white hover:bg-gray-900"
+          >
             Inicio
           </Button>
-          <Button as={NavLink} to="/login" className="p-1 bg-transparent hover:bg-transparent">
-            <img src={loginIcon} alt="Iniciar sesión" className="w-10 h-10 object-contain" />
-          </Button>
+
+          {/* LOGIN - sin efecto 3D */}
+          <NavLink
+            to="/login"
+            className="p-0 m-0 bg-transparent hover:bg-transparent shadow-none focus:ring-0 focus:outline-none"
+          >
+            <img
+              src={loginIcon}
+              alt="Iniciar sesión"
+              className="w-10 h-10 object-contain"
+            />
+          </NavLink>
         </nav>
       </div>
 
       {/* Menú lateral - Móvil */}
       {menuOpen && (
         <div className="sm:hidden fixed top-0 left-0 w-3/4 h-full bg-white shadow-lg z-50 p-4 space-y-4">
-          <Button as={NavLink} to="/catalogo/productos" className="block text-blue-700 font-semibold" onClick={() => setMenuOpen(false)}>
+          <Button
+            as={NavLink}
+            to="/catalogo/productos"
+            className="block bg-blue-100 text-blue-700 font-semibold"
+            onClick={() => setMenuOpen(false)}
+          >
             Productos
           </Button>
-          <Button as={NavLink} to="/catalogo/servicios" className="block text-blue-700 font-semibold" onClick={() => setMenuOpen(false)}>
+          <Button
+            as={NavLink}
+            to="/catalogo/servicios"
+            className="block bg-blue-100 text-blue-700 font-semibold"
+            onClick={() => setMenuOpen(false)}
+          >
             Servicios
           </Button>
-          <Button as={NavLink} to="/catalogo/maquinaria" className="block text-blue-700 font-semibold" onClick={() => setMenuOpen(false)}>
+          <Button
+            as={NavLink}
+            to="/catalogo/maquinaria"
+            className="block bg-blue-100 text-blue-700 font-semibold"
+            onClick={() => setMenuOpen(false)}
+          >
             Maquinaria
           </Button>
-          <Button as={NavLink} to="/" className="block text-white bg-blue-700 px-3 py-2 rounded" onClick={() => setMenuOpen(false)}>
+          <Button
+            as={NavLink}
+            to="/"
+            className="block text-white bg-blue-700"
+            onClick={() => setMenuOpen(false)}
+          >
             Inicio
           </Button>
-          <Button as={NavLink} to="/login" className="block" onClick={() => setMenuOpen(false)}>
-            <img src={loginIcon} alt="Iniciar sesión" className="w-10 h-10 object-contain" />
-          </Button>
+
+          {/* LOGIN - sin efecto 3D */}
+          <NavLink
+            to="/login"
+            className="p-0 m-0 bg-transparent hover:bg-transparent shadow-none focus:ring-0 focus:outline-none"
+            onClick={() => setMenuOpen(false)}
+          >
+            <img
+              src={loginIcon}
+              alt="Iniciar sesión"
+              className="w-10 h-10 object-contain"
+            />
+          </NavLink>
         </div>
       )}
     </header>

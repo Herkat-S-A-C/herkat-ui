@@ -33,8 +33,8 @@ function Modal({ item, onClose }) {
 
 function Catalog() {
   const { type } = useParams();
-
-  const [selectedItem, setSelectedItem] = useState(null); // Modal state
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const dataMap = {
     productos: products,
@@ -44,7 +44,15 @@ function Catalog() {
 
   const items = dataMap[type?.toLowerCase()] || [];
 
-  const groupedItems = items.reduce((acc, item) => {
+  const filteredItems = items.filter((item) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(term) ||
+      item.type.toLowerCase().includes(term)
+    );
+  });
+
+  const groupedItems = filteredItems.reduce((acc, item) => {
     acc[item.type] = acc[item.type] || [];
     acc[item.type].push(item);
     return acc;
@@ -62,9 +70,22 @@ function Catalog() {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-100">
-        <h1 className="text-2xl md:text-3xl font-bold mb-6 capitalize px-4 pt-8 md:px-6">
-          {type}
-        </h1>
+        {/* Título + barra de búsqueda alineados */}
+        <div className="px-4 md:px-6 pt-8 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold capitalize">
+            {type}
+          </h1>
+
+          {type !== "servicios" && (
+            <input
+              type="text"
+              placeholder="Buscar por nombre o tipo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+            />
+          )}
+        </div>
 
         {items.length > 0 ? (
           type === "servicios" ? (
@@ -81,49 +102,53 @@ function Catalog() {
             </div>
           ) : (
             <>
-              {Object.entries(groupedItems).map(([subtipo, itemsSubgrupo]) => (
-                <section
-                  className="mb-12 px-4 md:px-6 relative bg-gray-100"
-                  key={subtipo}
-                >
-                  <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-3 capitalize">
-                    {subtipo}
-                  </h2>
-
-                  <button
-                    onClick={() => scroll(subtipo, -1)}
-                    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
+              {Object.entries(groupedItems).map(
+                ([subtipo, itemsSubgrupo]) => (
+                  <section
+                    className="mb-12 px-4 md:px-6 bg-gray-100"
+                    key={subtipo}
                   >
-                    <FaChevronLeft className="text-blue-800" />
-                  </button>
+                    <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-3 capitalize">
+                      {subtipo}
+                    </h2>
 
-                  <div
-                    ref={(el) => (scrollRefs.current[subtipo] = el)}
-                    className="flex overflow-x-auto gap-4 scroll-smooth transition-transform duration-500 ease-in-out no-scrollbar pb-2"
-                  >
-                    {itemsSubgrupo.map((item) => (
-                      <div
-                        key={item.id}
-                        className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]"
-                        onClick={() => setSelectedItem(item)} // <-- ABRIR MODAL
+                    <div className="relative">
+                      <button
+                        onClick={() => scroll(subtipo, -1)}
+                        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
                       >
-                        <CardItem
-                          title={item.title}
-                          description={item.description}
-                          image={item.image}
-                        />
-                      </div>
-                    ))}
-                  </div>
+                        <FaChevronLeft className="text-blue-800" />
+                      </button>
 
-                  <button
-                    onClick={() => scroll(subtipo, 1)}
-                    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
-                  >
-                    <FaChevronRight className="text-blue-800" />
-                  </button>
-                </section>
-              ))}
+                      <div
+                        ref={(el) => (scrollRefs.current[subtipo] = el)}
+                        className="pt-4 px-6 flex overflow-x-auto gap-3 scroll-smooth transition-transform duration-500 ease-in-out no-scrollbar w-full"
+                      >
+                        {itemsSubgrupo.map((item) => (
+                          <div
+                            key={item.id}
+                            className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px]"
+                            onClick={() => setSelectedItem(item)}
+                          >
+                            <CardItem
+                              title={item.title}
+                              description={item.description}
+                              image={item.image}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => scroll(subtipo, 1)}
+                        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
+                      >
+                        <FaChevronRight className="text-blue-800" />
+                      </button>
+                    </div>
+                  </section>
+                )
+              )}
             </>
           )
         ) : (
@@ -133,7 +158,6 @@ function Catalog() {
         )}
       </div>
 
-      {/* Modal visible solo si hay item seleccionado */}
       {selectedItem && (
         <Modal item={selectedItem} onClose={() => setSelectedItem(null)} />
       )}

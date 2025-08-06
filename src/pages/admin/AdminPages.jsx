@@ -4,6 +4,7 @@ import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
 import HomePreview from "/src/components/HomePreview";
 import { products, services, machinery, banner } from "/src/constants/dataItems";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminPage = () => {
   const [data, setData] = useState({
@@ -17,9 +18,8 @@ const AdminPage = () => {
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [previewVisible, setPreviewVisible] = useState(true); // Estado para mostrar/ocultar la vista previa
+  const [previewVisible, setPreviewVisible] = useState(false);
 
-  // Filtrar datos
   const filteredData = data[selected].filter((item) => {
     if (selected === "banner") {
       return String(item.id).toLowerCase().includes(search.toLowerCase());
@@ -32,7 +32,6 @@ const AdminPage = () => {
     );
   });
 
-  // Guardar
   const handleSave = (newItem) => {
     if (editItem) {
       const updated = data[selected].map((item) =>
@@ -46,30 +45,31 @@ const AdminPage = () => {
     setModalOpen(false);
   };
 
-  // Eliminar
   const handleDelete = (id) => {
     const updated = data[selected].filter((item) => item.id !== id);
     setData({ ...data, [selected]: updated });
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar selected={selected} setSelected={setSelected} />
 
       <div className="flex-1 p-6">
         {/* Encabezado */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold capitalize">{selected}</h1>
-          <div className="flex gap-2">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold capitalize text-gray-800">
+            {selected}
+          </h1>
+          <div className="flex gap-3">
             <input
               type="text"
               placeholder="Buscar..."
-              className="border p-2 rounded"
+              className="p-2 px-4 rounded-xl border border-gray-300 shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-gradient-to-br from-blue-500 to-blue-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:ring-2 hover:ring-indigo-400 hover:bg-blue-500 transform transition-transform hover:scale-[1.02]"
               onClick={() => {
                 setModalOpen(true);
                 setEditItem(null);
@@ -91,21 +91,21 @@ const AdminPage = () => {
           onDelete={handleDelete}
         />
 
-        {/* Botón para mostrar/ocultar la vista previa */}
+        {/* Botón Vista Previa (estilo 3D y flotante) */}
         <button
           onClick={() => setPreviewVisible(!previewVisible)}
-          className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hover:bg-blue-700 z-50"
+          className="fixed bottom-5 right-5 z-50 bg-gradient-to-br from-blue-500 to-blue-700 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:ring-2 hover:ring-indigo-400 transform transition-transform duration-300 hover:scale-[1.05] flex items-center gap-2"
         >
-          {previewVisible ? "Ocultar Vista Previa" : "Mostrar Vista Previa"}
+          {previewVisible ? <FaEyeSlash /> : <FaEye />}
         </button>
 
-        {/* Vista previa solo si está visible */}
+        {/* Vista previa */}
         {previewVisible && (
-          <div className="fixed bottom-16 right-4 w-96 h-64 bg-white border shadow-lg rounded-lg overflow-hidden">
-            <div className="bg-gray-200 px-4 py-2 border-b text-sm font-bold">
+          <div className="fixed bottom-20 right-5 w-[26rem] h-[28rem] bg-white border border-gray-200 shadow-2xl rounded-3xl overflow-hidden z-40">
+            <div className="bg-gray-100 px-4 py-2 border-b text-sm font-semibold text-gray-700">
               Vista previa
             </div>
-            <div className="w-full h-full overflow-auto">
+            <div className="w-full h-full overflow-auto p-4">
               <HomePreview
                 banner={data.banner}
                 productos={data.productos}

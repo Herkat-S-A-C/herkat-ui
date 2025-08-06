@@ -30,9 +30,15 @@ function Home() {
     container.scrollBy({ left: 200, behavior: "smooth" });
   };
 
-  const productosDestacados = products.filter(item => item.outstanding === "si");
-  const maquinariaDestacada = machinery.filter(item => item.outstanding === "si");
-  const serviciosDestacados = services.filter(item => item.outstanding === "si");
+  const productosDestacados = products.filter(
+    (item) => item.outstanding === "si"
+  );
+  const maquinariaDestacada = machinery.filter(
+    (item) => item.outstanding === "si"
+  );
+  const serviciosDestacados = services.filter(
+    (item) => item.outstanding === "si"
+  );
 
   const openModal = (item) => setSelectedItem(item);
   const closeModal = () => setSelectedItem(null);
@@ -64,41 +70,48 @@ function Home() {
       )}
 
       {/* Productos */}
-      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] relative bg-gray-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Productos destacados
-        </h2>
-        <button
-          onClick={() => scrollLeft("productos")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
-        >
-          <FaChevronLeft className="text-blue-800" />
-        </button>
-        <div
-          id="productos"
-          className="flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full"
-        >
-          {productosDestacados.map((item) => (
-            <div
-              key={item.id}
-              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer"
-              onClick={() => openModal(item)}
-            >
-              <CardItem
-                title={item.title}
-                description={item.description}
-                image={item.image}
-              />
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={() => scrollRight("productos")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
-        >
-          <FaChevronRight className="text-blue-800" />
-        </button>
-      </section>
+<section className="mt-10 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] relative bg-gray-100 overflow-visible pb-12">
+  <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+  Productos destacados
+</h2>
+
+  {/* Botón izquierdo */}
+  <button
+    onClick={() => scrollLeft("productos")}
+    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
+  >
+    <FaChevronLeft className="text-blue-800" />
+  </button>
+
+  {/* Carrusel */}
+  <div
+  id="productos"
+  className="pt-2 px-1.5 relative flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full z-0 overflow-visible">
+    {productosDestacados.map((item) => (
+      <div
+        key={item.id}
+        className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer"
+        onClick={() => openModal(item)}
+      >
+        <CardItem
+          title={item.title}
+          description={item.description}
+          image={item.image}
+        />
+      </div>
+    ))}
+  </div>
+
+  {/* Botón derecho */}
+  <button
+    onClick={() => scrollRight("productos")}
+    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10"
+  >
+    <FaChevronRight className="text-blue-800" />
+  </button>
+</section>
+
+
 
       {/* Servicios */}
       <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] bg-gray-100">
@@ -131,8 +144,7 @@ function Home() {
         </button>
         <div
           id="maquinarias"
-          className="flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full"
-        >
+          className="pt-2 px-1.5 relative flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full z-0 overflow-visible">
           {maquinariaDestacada.map((item) => (
             <div
               key={item.id}
@@ -163,7 +175,7 @@ function Home() {
         <div className="w-full h-96 rounded-md overflow-hidden shadow-lg">
           <iframe
             title="Ubicación del local"
-            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3902.4214076270105!2d-76.96286052493942!3d-12.014482988219758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDAwJzUyLjEiUyA3NsKwNTcnMzcuMCJX!5e0!3m2!1ses!2spe!4v1754349773753!5m2!1ses!2spe" 
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3902.4214076270105!2d-76.96286052493942!3d-12.014482988219758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDAwJzUyLjEiUyA3NsKwNTcnMzcuMCJX!5e0!3m2!1ses!2spe!4v1754349773753!5m2!1ses!2spe"
             width="100%"
             height="100%"
             style={{ border: 0 }}
