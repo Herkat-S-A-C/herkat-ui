@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 const ModalForm = ({ type, onClose, onSave, item }) => {
   const isBanner = type === "banner";
   const isSocial = type === "sociales";
+  const isTipo = type === "tipos";
 
   const [form, setForm] = useState({
     id: "",
@@ -11,9 +12,12 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     capacidad: "",
     descripcion: "",
     imagen: "",
+    file: null,
     outstanding: "no",
     left: "no",
     url: "",
+    hoverColor: "",
+    icon: "",
   });
 
   useEffect(() => {
@@ -25,6 +29,7 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
         capacidad: item.capacidad || "",
         descripcion: item.description || item.descripcion || "",
         imagen: item.image || item.imagen || "",
+        file: null,
         outstanding: item.outstanding || "no",
         left: item.left || "no",
         url: item.url || "",
@@ -38,19 +43,43 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setForm({ ...form, file });
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prev) => ({ ...prev, imagen: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = () => {
     if (!form.id) return alert("El ID es obligatorio");
 
+    let imageData = form.imagen;
+    if (form.file) {
+      imageData = form.file;
+    }
+
     if (isBanner) {
-      onSave({ id: form.id, image: form.imagen });
+      onSave({ id: form.id, image: imageData });
     } else if (isSocial) {
-      if (!form.nombre || !form.url) return alert("Título y URL son obligatorios");
+      if (!form.nombre || !form.url)
+        return alert("Título y URL son obligatorios");
       onSave({
         id: form.id,
         title: form.nombre,
         url: form.url,
         hoverColor: form.hoverColor,
         icon: form.icon,
+      });
+    } else if (isTipo) {
+      if (!form.nombre) return alert("Completa al menos ID y Nombre");
+      onSave({
+        id: form.id,
+        nombre: form.nombre,
       });
     } else {
       if (!form.nombre) return alert("Completa al menos ID y Nombre");
@@ -60,7 +89,7 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
         type: form.tipo,
         capacidad: form.capacidad,
         description: form.descripcion,
-        image: form.imagen,
+        image: imageData,
         outstanding: form.outstanding,
         left: form.left,
       });
@@ -69,10 +98,16 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded shadow-lg w-96">
+      <div className="bg-white p-6 rounded shadow-lg w-96 max-h-[90vh] overflow-auto">
         <h2 className="text-xl font-bold mb-4">
           {item ? "Editar" : "Registrar"}{" "}
-          {isBanner ? "Banner" : isSocial ? "Red Social" : "Elemento"}
+          {isBanner
+            ? "Banner"
+            : isSocial
+            ? "Red Social"
+            : isTipo
+            ? "Tipo"
+            : "Elemento"}
         </h2>
 
         {/* Banner */}
@@ -90,8 +125,21 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
               value={form.imagen}
               onChange={handleChange}
               placeholder="URL Imagen"
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
               className="border p-2 w-full mb-4"
             />
+            {form.imagen && (
+              <img
+                src={form.file ? URL.createObjectURL(form.file) : form.imagen}
+                alt="Vista previa"
+                className="w-full h-40 object-cover rounded mb-4"
+              />
+            )}
           </>
         )}
 
@@ -115,8 +163,28 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
           </>
         )}
 
+        {/* Tipos */}
+        {isTipo && (
+          <>
+            <input
+              name="id"
+              value={form.id}
+              onChange={handleChange}
+              placeholder="ID"
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              placeholder="Nombre"
+              className="border p-2 w-full mb-2"
+            />
+          </>
+        )}
+
         {/* Productos / Servicios / Maquinaria */}
-        {!isBanner && !isSocial && (
+        {!isBanner && !isSocial && !isTipo && (
           <>
             <input
               name="id"
@@ -158,8 +226,21 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
               value={form.imagen}
               onChange={handleChange}
               placeholder="URL Imagen"
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
               className="border p-2 w-full mb-4"
             />
+            {form.imagen && (
+              <img
+                src={form.file ? URL.createObjectURL(form.file) : form.imagen}
+                alt="Vista previa"
+                className="w-full h-40 object-cover rounded mb-4"
+              />
+            )}
             <label className="block mb-2 font-semibold">¿Destacado?</label>
             <select
               name="outstanding"
@@ -172,7 +253,9 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
             </select>
             {type === "servicios" && (
               <>
-                <label className="block mb-2 font-semibold">¿Ubicar a la izquierda?</label>
+                <label className="block mb-2 font-semibold">
+                  ¿Ubicar a la izquierda?
+                </label>
                 <select
                   name="left"
                   value={form.left}

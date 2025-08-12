@@ -269,28 +269,28 @@ import {
 
 export const social_networks = [
   {
-    id: "facebook",
+    id: "1",
     icon: FaFacebookF,
     url: "https://facebook.com",
     hoverColor: "hover:text-blue-600",
     title: "Facebook",
   },
   {
-    id: "tiktok",
+    id: "2",
     icon: FaTiktok,
     url: "https://tiktok.com",
     hoverColor: "hover:text-gray-100",
     title: "TikTok",
   },
   {
-    id: "email",
+    id: "3",
     icon: FaEnvelope,
     url: "mailto:herkat.contacto@gmail.com",
     hoverColor: "hover:text-red-500",
     title: "Correo electrónico",
   },
   {
-    id: "whatsapp",
+    id: "4",
     icon: FaWhatsapp,
     url: "https://wa.me/51989865307",
     hoverColor: "hover:text-green-500",

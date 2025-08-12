@@ -6,15 +6,16 @@ const Table = ({ data, type, onEdit, onDelete }) => {
           <th className="border p-2">ID</th>
           {type === "sociales" && <th className="border p-2">Título</th>}
           {type === "sociales" && <th className="border p-2">URL</th>}
+          {type === "tipos" && <th className="border p-2">Nombre</th>}
 
-          {type !== "banner" && type !== "sociales" && <th className="border p-2">Título</th>}
-          {type !== "banner" && type !== "sociales" && (
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Título</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
             <th className="border p-2 w-48">Descripción</th>
           )}
-          {type !== "banner" && type !== "sociales" && <th className="border p-2">Tipo</th>}
-          {type !== "banner" && type !== "sociales" && <th className="border p-2">Destacado</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Tipo</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Destacado</th>}
           {type === "servicios" && <th className="border p-2">Izquierda</th>}
-          {type !== "sociales" && <th className="border p-2">Imagen</th>}
+          {type !== "sociales" && type !== "tipos" && <th className="border p-2">Imagen</th>}
           <th className="border p-2">Acciones</th>
         </tr>
       </thead>
@@ -28,6 +29,8 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 ? 8
                 : type === "sociales"
                 ? 4
+                : type === "tipos"
+                ? 2
                 : 7
             }
             className="p-4 text-gray-500 text-center"
@@ -48,15 +51,16 @@ const Table = ({ data, type, onEdit, onDelete }) => {
           <th className="border p-2">ID</th>
           {type === "sociales" && <th className="border p-2">Título</th>}
           {type === "sociales" && <th className="border p-2">URL</th>}
+          {type === "tipos" && <th className="border p-2">Nombre</th>}
 
-          {type !== "banner" && type !== "sociales" && <th className="border p-2">Título</th>}
-          {type !== "banner" && type !== "sociales" && (
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Título</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
             <th className="border p-2 w-48">Descripción</th>
           )}
-          {type !== "banner" && type !== "sociales" && <th className="border p-2">Tipo</th>}
-          {type !== "banner" && type !== "sociales" && <th className="border p-2">Destacado</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Tipo</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Destacado</th>}
           {type === "servicios" && <th className="border p-2">Izquierda</th>}
-          {type !== "sociales" && <th className="border p-2">Imagen</th>}
+          {type !== "sociales" && type !== "tipos" && <th className="border p-2">Imagen</th>}
           <th className="border p-2">Acciones</th>
         </tr>
       </thead>
@@ -72,10 +76,12 @@ const Table = ({ data, type, onEdit, onDelete }) => {
               </td>
             )}
 
-            {type !== "banner" && type !== "sociales" && (
+            {type === "tipos" && <td className="border p-2">{item.nombre}</td>}
+
+            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
               <td className="border p-2">{item.title || item.nombre}</td>
             )}
-            {type !== "banner" && type !== "sociales" && (
+            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
               <td
                 className="border p-2 w-48 max-w-xs truncate"
                 title={item.description || item.descripcion}
@@ -83,10 +89,10 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 {item.description || item.descripcion}
               </td>
             )}
-            {type !== "banner" && type !== "sociales" && (
+            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
               <td className="border p-2">{item.type || item.tipo}</td>
             )}
-            {type !== "banner" && type !== "sociales" && (
+            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
               <td className="border p-2">
                 {item.outstanding === "si" ? "Sí" : "No"}
               </td>
@@ -95,7 +101,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
               <td className="border p-2">{item.left === "sí" ? "Sí" : "No"}</td>
             )}
 
-            {type !== "sociales" && (
+            {type !== "sociales" && type !== "tipos" && (
               <td className="border p-2">
                 <img
                   src={item.image || item.imagen}

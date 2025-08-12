@@ -1,18 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "/src/components/Sidebar";
 import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
 import HomePreview from "/src/components/HomePreview";
-import { products, services, machinery, banner, social_networks } from "/src/constants/dataItems";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+const API_BASE = "https://herkat-api.onrender.com";
+
+const endpointsMap = {
+  productos: "products",
+  servicios: "service-items",
+  maquinaria: "machines",
+  banner: "banners",
+  sociales: "social-media", // usaremos ruta especial para GET
+  tipos: "tipos",
+};
 
 const AdminPage = () => {
   const [data, setData] = useState({
-    banner: banner,
-    productos: products,
-    servicios: services,
-    maquinaria: machinery,
-    sociales: social_networks,
+    banner: [],
+    productos: [],
+    servicios: [],
+    maquinaria: [],
+    sociales: [],
+    tipos: [],
   });
 
   const [selected, setSelected] = useState("productos");
@@ -21,34 +32,112 @@ const AdminPage = () => {
   const [editItem, setEditItem] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
 
-  const filteredData = data[selected].filter((item) => {
-    if (selected === "banner") {
-      return String(item.id).toLowerCase().includes(search.toLowerCase());
-    }
-    const nameKey = item.title || item.nombre || "";
-    const idKey = String(item.id);
-    return (
-      nameKey.toLowerCase().includes(search.toLowerCase()) ||
-      idKey.toLowerCase().includes(search.toLowerCase())
-    );
-  });
+  // Cargar datos desde la API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let url;
+        if (selected === "sociales") {
+          // URL especial para redes sociales
+          url = "https://herkat-api.onrender.com/api/v1/social-media";
+        } else {
+          const endpoint = endpointsMap[selected];
+          url = `${API_BASE}/${endpoint}`;
+        }
 
-  const handleSave = (newItem) => {
-    if (editItem) {
-      const updated = data[selected].map((item) =>
-        item.id === editItem.id ? newItem : item
-      );
-      setData({ ...data, [selected]: updated });
-    } else {
-      setData({ ...data, [selected]: [...data[selected], newItem] });
+        const res = await fetch(url);
+        const json = await res.json();
+
+        setData((prev) => ({
+          ...prev,
+          [selected]: Array.isArray(json) ? json : json.data || [],
+        }));
+      } catch (error) {
+        console.error(`Error cargando ${selected}:`, error);
+      }
+    };
+    fetchData();
+  }, [selected]);
+
+  // Filtrado de datos
+  const filteredData = Array.isArray(data[selected])
+    ? data[selected].filter((item) => {
+        if (selected === "banner") {
+          return String(item.id).toLowerCase().includes(search.toLowerCase());
+        }
+        if (selected === "tipos") {
+          const nameKey = item.nombre || "";
+          return (
+            nameKey.toLowerCase().includes(search.toLowerCase()) ||
+            String(item.id).toLowerCase().includes(search.toLowerCase())
+          );
+        }
+        if (selected === "sociales") {
+          const nameKey = item.title || "";
+          return (
+            nameKey.toLowerCase().includes(search.toLowerCase()) ||
+            String(item.id).toLowerCase().includes(search.toLowerCase())
+          );
+        }
+        const nameKey = item.title || item.nombre || "";
+        const idKey = String(item.id);
+        return (
+          nameKey.toLowerCase().includes(search.toLowerCase()) ||
+          idKey.toLowerCase().includes(search.toLowerCase())
+        );
+      })
+    : [];
+
+  const handleSave = async (newItem) => {
+    const endpoint = endpointsMap[selected];
+    try {
+      if (editItem) {
+        // Editar
+        const res = await fetch(`${API_BASE}/${endpoint}/${editItem.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newItem),
+        });
+        if (!res.ok) throw new Error("Error al editar");
+      } else {
+        // Crear
+        const res = await fetch(`${API_BASE}/${endpoint}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newItem),
+        });
+        if (!res.ok) throw new Error("Error al crear");
+      }
+      // Recargar datos
+      const updatedRes = await fetch(`${API_BASE}/${endpoint}`);
+      const updatedJson = await updatedRes.json();
+      setData((prev) => ({
+        ...prev,
+        [selected]: Array.isArray(updatedJson)
+          ? updatedJson
+          : updatedJson.data || [],
+      }));
+    } catch (error) {
+      console.error("Error guardando:", error);
     }
     setEditItem(null);
     setModalOpen(false);
   };
 
-  const handleDelete = (id) => {
-    const updated = data[selected].filter((item) => item.id !== id);
-    setData({ ...data, [selected]: updated });
+  const handleDelete = async (id) => {
+    const endpoint = endpointsMap[selected];
+    try {
+      const res = await fetch(`${API_BASE}/${endpoint}/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Error al eliminar");
+      setData((prev) => ({
+        ...prev,
+        [selected]: prev[selected].filter((item) => item.id !== id),
+      }));
+    } catch (error) {
+      console.error("Error eliminando:", error);
+    }
   };
 
   return (

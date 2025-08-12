@@ -16,7 +16,7 @@ const Sidebar = ({ selected, setSelected }) => {
           Gestión
         </h2>
         <ul className="space-y-1 mt-2">
-          {["banner", "productos", "servicios", "maquinaria", "sociales"].map((item) => (
+          {["banner", "productos", "servicios", "maquinaria", "sociales", "tipos"].map((item) => (
             <li
               key={item}
               className={`p-3 text-sm text-center capitalize cursor-pointer transition-all duration-200 rounded-md mx-2 ${
