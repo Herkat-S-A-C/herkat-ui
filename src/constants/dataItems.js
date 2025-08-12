@@ -252,3 +252,48 @@ export const machinery = [
     outstanding: "si"
   }
 ];
+
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaEnvelope,
+  FaWhatsapp,
+  FaTwitter,
+  FaLinkedinIn,
+  FaYoutube,
+  FaTiktok,
+  FaPinterestP,
+  FaTelegramPlane,
+  FaGithub,
+} from "react-icons/fa";
+
+export const social_networks = [
+  {
+    id: "facebook",
+    icon: FaFacebookF,
+    url: "https://facebook.com",
+    hoverColor: "hover:text-blue-600",
+    title: "Facebook",
+  },
+  {
+    id: "tiktok",
+    icon: FaTiktok,
+    url: "https://tiktok.com",
+    hoverColor: "hover:text-gray-100",
+    title: "TikTok",
+  },
+  {
+    id: "email",
+    icon: FaEnvelope,
+    url: "mailto:herkat.contacto@gmail.com",
+    hoverColor: "hover:text-red-500",
+    title: "Correo electrónico",
+  },
+  {
+    id: "whatsapp",
+    icon: FaWhatsapp,
+    url: "https://wa.me/51989865307",
+    hoverColor: "hover:text-green-500",
+    title: "WhatsApp",
+  },
+];

@@ -3,7 +3,7 @@ import Sidebar from "/src/components/Sidebar";
 import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
 import HomePreview from "/src/components/HomePreview";
-import { products, services, machinery, banner } from "/src/constants/dataItems";
+import { products, services, machinery, banner, social_networks } from "/src/constants/dataItems";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminPage = () => {
@@ -12,6 +12,7 @@ const AdminPage = () => {
     productos: products,
     servicios: services,
     maquinaria: machinery,
+    sociales: social_networks,
   });
 
   const [selected, setSelected] = useState("productos");
@@ -68,15 +69,17 @@ const AdminPage = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button
-              className="bg-gradient-to-br from-blue-500 to-blue-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:ring-2 hover:ring-indigo-400 hover:bg-blue-500 transform transition-transform hover:scale-[1.02]"
-              onClick={() => {
-                setModalOpen(true);
-                setEditItem(null);
-              }}
-            >
-              Registrar +
-            </button>
+            {selected !== "sociales" && (
+              <button
+                className="bg-gradient-to-br from-blue-500 to-blue-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:ring-2 hover:ring-indigo-400 hover:bg-blue-500 transform transition-transform hover:scale-[1.02]"
+                onClick={() => {
+                  setModalOpen(true);
+                  setEditItem(null);
+                }}
+              >
+                Registrar +
+              </button>
+            )}
           </div>
         </div>
 
@@ -91,7 +94,7 @@ const AdminPage = () => {
           onDelete={handleDelete}
         />
 
-        {/* Botón Vista Previa (estilo 3D y flotante) */}
+        {/* Botón Vista Previa */}
         <button
           onClick={() => setPreviewVisible(!previewVisible)}
           className="fixed bottom-5 right-5 z-50 bg-gradient-to-br from-blue-500 to-blue-700 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:ring-2 hover:ring-indigo-400 transform transition-transform duration-300 hover:scale-[1.05] flex items-center gap-2"

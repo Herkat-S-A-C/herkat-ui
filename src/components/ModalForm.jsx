@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 const ModalForm = ({ type, onClose, onSave, item }) => {
   const isBanner = type === "banner";
+  const isSocial = type === "sociales";
 
   const [form, setForm] = useState({
     id: "",
@@ -11,7 +12,8 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     descripcion: "",
     imagen: "",
     outstanding: "no",
-    left: "no"
+    left: "no",
+    url: "",
   });
 
   useEffect(() => {
@@ -24,7 +26,10 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
         descripcion: item.description || item.descripcion || "",
         imagen: item.image || item.imagen || "",
         outstanding: item.outstanding || "no",
-        left: item.left || "no"
+        left: item.left || "no",
+        url: item.url || "",
+        hoverColor: item.hoverColor || "",
+        icon: item.icon || "",
       });
     }
   }, [item]);
@@ -35,36 +40,43 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
 
   const handleSubmit = () => {
     if (!form.id) return alert("El ID es obligatorio");
-    if (!isBanner && !form.nombre) return alert("Completa al menos ID y Nombre");
 
-    onSave(
-      isBanner
-        ? {
-            id: form.id,
-            image: form.imagen
-          }
-        : {
-            id: form.id,
-            title: form.nombre,
-            type: form.tipo,
-            capacidad: form.capacidad,
-            description: form.descripcion,
-            image: form.imagen,
-            outstanding: form.outstanding,
-            left: form.left
-          }
-    );
+    if (isBanner) {
+      onSave({ id: form.id, image: form.imagen });
+    } else if (isSocial) {
+      if (!form.nombre || !form.url) return alert("Título y URL son obligatorios");
+      onSave({
+        id: form.id,
+        title: form.nombre,
+        url: form.url,
+        hoverColor: form.hoverColor,
+        icon: form.icon,
+      });
+    } else {
+      if (!form.nombre) return alert("Completa al menos ID y Nombre");
+      onSave({
+        id: form.id,
+        title: form.nombre,
+        type: form.tipo,
+        capacidad: form.capacidad,
+        description: form.descripcion,
+        image: form.imagen,
+        outstanding: form.outstanding,
+        left: form.left,
+      });
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4">
-          {item ? "Editar" : "Registrar"} {isBanner ? "Banner" : "Elemento"}
+          {item ? "Editar" : "Registrar"}{" "}
+          {isBanner ? "Banner" : isSocial ? "Red Social" : "Elemento"}
         </h2>
 
-        {/* Campos para Banner */}
-        {isBanner ? (
+        {/* Banner */}
+        {isBanner && (
           <>
             <input
               name="id"
@@ -81,7 +93,30 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
               className="border p-2 w-full mb-4"
             />
           </>
-        ) : (
+        )}
+
+        {/* Redes Sociales */}
+        {isSocial && (
+          <>
+            <input
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              placeholder="Título"
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              name="url"
+              value={form.url}
+              onChange={handleChange}
+              placeholder="URL"
+              className="border p-2 w-full mb-2"
+            />
+          </>
+        )}
+
+        {/* Productos / Servicios / Maquinaria */}
+        {!isBanner && !isSocial && (
           <>
             <input
               name="id"
@@ -125,7 +160,6 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
               placeholder="URL Imagen"
               className="border p-2 w-full mb-4"
             />
-
             <label className="block mb-2 font-semibold">¿Destacado?</label>
             <select
               name="outstanding"
@@ -136,8 +170,7 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
               <option value="si">Sí</option>
               <option value="no">No</option>
             </select>
-
-            {(item?.left !== undefined || form.left !== "no") && (
+            {type === "servicios" && (
               <>
                 <label className="block mb-2 font-semibold">¿Ubicar a la izquierda?</label>
                 <select
@@ -155,10 +188,16 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
         )}
 
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="bg-gray-400 text-white px-4 py-2 rounded">
+          <button
+            onClick={onClose}
+            className="bg-gray-400 text-white px-4 py-2 rounded"
+          >
             Cancelar
           </button>
-          <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded">
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
             {item ? "Guardar" : "Agregar"}
           </button>
         </div>

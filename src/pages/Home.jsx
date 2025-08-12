@@ -85,7 +85,10 @@ function Home() {
     if (!firstChild) return 0;
     const style = window.getComputedStyle(container);
     const gapRaw =
-      style.columnGap || style.getPropertyValue("column-gap") || style.gap || "0px";
+      style.columnGap ||
+      style.getPropertyValue("column-gap") ||
+      style.gap ||
+      "0px";
     const gap = parseFloat(gapRaw) || 0;
     const width = firstChild.getBoundingClientRect().width;
     return Math.round(width + gap);
@@ -303,6 +306,33 @@ function Home() {
         <br />
         <br />
         <br />
+      </section>
+
+      {/* Visión y Misión */}
+      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] pb-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto text-gray-700">
+          <div>
+            <h3 className="text-xl font-semibold mb-2 text-blue-800">Visión</h3>
+            <p className="leading-relaxed text-justify">
+              Convertirnos en la referencia principal de la industria de envases
+              PET, impulsando el desarrollo tecnológico y sostenible del sector
+              mediante productos, maquinarias y servicios que marquen la
+              diferencia en calidad, eficiencia y respeto por el medio ambiente.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold mb-2 text-blue-800">Misión</h3>
+            <p className="leading-relaxed text-justify">
+              Brindar a nuestros clientes productos y servicios de alta calidad
+              en el soplado de botellas PET, venta de maquinaria especializada y
+              servicios de instalación, asegurando eficiencia, innovación y
+              soporte técnico oportuno. Nos comprometemos a impulsar el
+              crecimiento de nuestros clientes mediante soluciones confiables,
+              personalizadas y sostenibles, contribuyendo al desarrollo de la
+              industria de envases.
+            </p>
+          </div>
+        </div>
       </section>
 
       <ButtonWhatsApp />
