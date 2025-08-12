@@ -1,129 +1,148 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import Button from "./Button";
-import loginIcon from "../assets/icons/login.png";
 import Logo from "../assets/icons/Logo-1.png";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+
+  // Variables para swipe
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  useEffect(() => {
+    if (menuOpen) {
+      setShowBackdrop(true);
+    } else {
+      const timeout = setTimeout(() => setShowBackdrop(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [menuOpen]);
+
+  // Detectar swipe hacia la derecha para cerrar menú
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchMove(e) {
+    touchEndX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd() {
+    if (touchEndX.current - touchStartX.current > 50) {
+      setMenuOpen(false);
+    }
+  }
+
+  const links = [
+    { to: "/catalogo/productos", label: "Productos" },
+    { to: "/catalogo/servicios", label: "Servicios" },
+    { to: "/catalogo/maquinaria", label: "Maquinaria" },
+    { to: "/", label: "Inicio" }
+  ];
 
   return (
     <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-md sticky top-0 z-50 w-full">
-      <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
+      <div className="w-full px-6 py-3 flex justify-between items-center">
         {/* Logo */}
         <NavLink to="/" className="flex items-center">
           <img
             src={Logo}
             alt="HerKat Logo"
-            className="w-10 h-auto object-contain"
+            className="w-12 h-auto object-contain"
           />
         </NavLink>
 
-        {/* Botón hamburguesa (visible en móvil) */}
+        {/* Botón hamburguesa - móvil */}
         <button
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setMenuOpen(true)}
           className="sm:hidden text-white text-2xl"
           aria-label="Toggle Menu"
         >
-          {menuOpen ? <FaTimes /> : <FaBars />}
+          <FaBars />
         </button>
 
-        {/* Navegación - Escritorio */}
-        <nav className="hidden sm:flex gap-4 items-center">
-          <Button
-            as={NavLink}
-            to="/catalogo/productos"
-            className="bg-white text-blue-700 font-semibold hover:bg-gray-200"
-          >
-            Productos
-          </Button>
-          <Button
-            as={NavLink}
-            to="/catalogo/servicios"
-            className="bg-white text-blue-700 font-semibold hover:bg-gray-200"
-          >
-            Servicios
-          </Button>
-          <Button
-            as={NavLink}
-            to="/catalogo/maquinaria"
-            className="bg-white text-blue-700 font-semibold hover:bg-gray-200"
-          >
-            Maquinaria
-          </Button>
-          <Button
-            as={NavLink}
-            to="/"
-            className="bg-black text-white hover:bg-gray-900"
-          >
-            Inicio
-          </Button>
+        {/* Navegación escritorio */}
+        <nav className="hidden sm:flex gap-3 items-center">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                `px-5 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg hover:-translate-y-1 ${
+                  isActive
+                    ? "bg-white text-blue-700"
+                    : "border border-white text-white hover:bg-white hover:text-blue-700"
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
 
-          {/* LOGIN - sin efecto 3D */}
+          {/* Login */}
           <NavLink
             to="/login"
-            className="p-0 m-0 bg-transparent hover:bg-transparent shadow-none focus:ring-0 focus:outline-none"
+            className="flex items-center justify-center w-12 h-12 text-white rounded-full transition-all duration-300 hover:bg-white hover:text-blue-700 hover:-translate-y-1 hover:shadow-lg"
           >
-            <img
-              src={loginIcon}
-              alt="Iniciar sesión"
-              className="w-10 h-10 object-contain"
-            />
+            <span className="material-symbols-rounded text-4xl">
+              account_circle
+            </span>
           </NavLink>
         </nav>
       </div>
 
-      {/* Menú lateral - Móvil */}
-      {menuOpen && (
-        <div className="sm:hidden fixed top-0 left-0 w-3/4 h-full bg-white shadow-lg z-50 p-4 space-y-4">
-          <Button
-            as={NavLink}
-            to="/catalogo/productos"
-            className="block bg-blue-100 text-blue-700 font-semibold"
-            onClick={() => setMenuOpen(false)}
-          >
-            Productos
-          </Button>
-          <Button
-            as={NavLink}
-            to="/catalogo/servicios"
-            className="block bg-blue-100 text-blue-700 font-semibold"
-            onClick={() => setMenuOpen(false)}
-          >
-            Servicios
-          </Button>
-          <Button
-            as={NavLink}
-            to="/catalogo/maquinaria"
-            className="block bg-blue-100 text-blue-700 font-semibold"
-            onClick={() => setMenuOpen(false)}
-          >
-            Maquinaria
-          </Button>
-          <Button
-            as={NavLink}
-            to="/"
-            className="block text-white bg-blue-700"
-            onClick={() => setMenuOpen(false)}
-          >
-            Inicio
-          </Button>
-
-          {/* LOGIN - sin efecto 3D */}
-          <NavLink
-            to="/login"
-            className="p-0 m-0 bg-transparent hover:bg-transparent shadow-none focus:ring-0 focus:outline-none"
-            onClick={() => setMenuOpen(false)}
-          >
-            <img
-              src={loginIcon}
-              alt="Iniciar sesión"
-              className="w-10 h-10 object-contain"
-            />
-          </NavLink>
-        </div>
+      {/* Fondo oscuro con animación */}
+      {showBackdrop && (
+        <div
+          className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ${
+            menuOpen ? "opacity-50" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setMenuOpen(false)}
+        />
       )}
+
+      {/* Menú lateral con detección swipe */}
+      <div
+        className={`sm:hidden fixed top-0 right-0 w-[80%] h-full bg-gradient-to-b from-blue-700 to-indigo-800 shadow-lg z-50 p-6 space-y-4 overflow-y-auto transform transition-transform duration-300 ease-in-out ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Ya no hay botón cerrar */}
+
+        {/* Links */}
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `block w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-300 ease-in-out transform hover:-translate-y-1 shadow-sm hover:shadow-lg ${
+                isActive
+                  ? "bg-white text-blue-700"
+                  : "border border-white text-white hover:bg-white hover:text-blue-700"
+              }`
+            }
+          >
+            {link.label}
+          </NavLink>
+        ))}
+
+        {/* Login */}
+        <NavLink
+          to="/login"
+          onClick={() => setMenuOpen(false)}
+          className="flex items-center justify-center w-12 h-12 text-white rounded-full transition-all duration-300 transform hover:-translate-y-1 hover:bg-white hover:text-blue-700"
+        >
+          <span className="material-symbols-rounded text-5xl">
+            account_circle
+          </span>
+        </NavLink>
+      </div>
     </header>
   );
 }
