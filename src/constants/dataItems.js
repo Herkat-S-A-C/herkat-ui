@@ -1,19 +1,21 @@
+import localBanner1 from "../assets/banners/banner-prueba-1.png";
+import localBanner2 from "../assets/banners/banner-prueba-2.png";
+import localBanner3 from "../assets/banners/banner-prueba-3.png";
+
 export const banner = [
   {
     id: 1,
-    image: "https://i.ibb.co/C3GjBtm9/banner.png"
+    image: localBanner1,
   },
   {
     id: 2,
-    image: "https://img.freepik.com/vector-gratis/plantilla-banner-horizontal-degradado-evento-buen-fin-espanol_23-2150810851.jpg?semt=ais_hybrid&w=740"
+    image: localBanner2,
   },
   {
     id: 3,
-    image: "https://img.freepik.com/vector-gratis/plantilla-banner-horizontal-degradado-ventas-buen-fin-mexicano_52683-140643.jpg?semt=ais_items_boosted&w=740"
+    image: localBanner3
   }
 ];
-
-
 
 export const products = [
   // Botellas

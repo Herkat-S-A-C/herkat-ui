@@ -10,3 +10,10 @@
   -ms-overflow-style: none; /* IE y Edge */
   scrollbar-width: none;    /* Firefox */
 }
+
+/* Elimina el outline azul en foco, para todos los elementos con esta clase */
+.no-outline:focus,
+.no-outline:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
