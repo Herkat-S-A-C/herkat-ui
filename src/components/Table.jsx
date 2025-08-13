@@ -64,7 +64,6 @@ const Table = ({ data, type, onEdit, onDelete }) => {
         </tr>
       </thead>
 
-      /*posiciona el contenido*/ 
       <tbody>
         {data.map((item) => (
           <tr key={item.id} className="text-center">
