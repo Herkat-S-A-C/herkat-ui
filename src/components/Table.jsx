@@ -4,18 +4,25 @@ const Table = ({ data, type, onEdit, onDelete }) => {
       <thead>
         <tr className="bg-gray-200">
           <th className="border p-2">ID</th>
-          {type === "sociales" && <th className="border p-2">Título</th>}
+          {type === "sociales" && <th className="border p-2">Tipo</th>}
           {type === "sociales" && <th className="border p-2">URL</th>}
           {type === "tipos" && <th className="border p-2">Nombre</th>}
-
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Título</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Título</th>
+          )}
           {type !== "banner" && type !== "sociales" && type !== "tipos" && (
             <th className="border p-2 w-48">Descripción</th>
           )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Tipo</th>}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Destacado</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Tipo</th>
+          )}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Destacado</th>
+          )}
           {type === "servicios" && <th className="border p-2">Izquierda</th>}
-          {type !== "sociales" && type !== "tipos" && <th className="border p-2">Imagen</th>}
+          {type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Imagen</th>
+          )}
           <th className="border p-2">Acciones</th>
         </tr>
       </thead>
@@ -28,7 +35,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 : type === "servicios"
                 ? 8
                 : type === "sociales"
-                ? 4
+                ? 3
                 : type === "tipos"
                 ? 2
                 : 7
@@ -49,18 +56,25 @@ const Table = ({ data, type, onEdit, onDelete }) => {
       <thead>
         <tr className="bg-gray-200">
           <th className="border p-2">ID</th>
-          {type === "sociales" && <th className="border p-2">Título</th>}
+          {type === "sociales" && <th className="border p-2">Tipo</th>}
           {type === "sociales" && <th className="border p-2">URL</th>}
           {type === "tipos" && <th className="border p-2">Nombre</th>}
-
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Título</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Título</th>
+          )}
           {type !== "banner" && type !== "sociales" && type !== "tipos" && (
             <th className="border p-2 w-48">Descripción</th>
           )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Tipo</th>}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && <th className="border p-2">Destacado</th>}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Tipo</th>
+          )}
+          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Destacado</th>
+          )}
           {type === "servicios" && <th className="border p-2">Izquierda</th>}
-          {type !== "sociales" && type !== "tipos" && <th className="border p-2">Imagen</th>}
+          {type !== "sociales" && type !== "tipos" && (
+            <th className="border p-2">Imagen</th>
+          )}
           <th className="border p-2">Acciones</th>
         </tr>
       </thead>
@@ -69,10 +83,10 @@ const Table = ({ data, type, onEdit, onDelete }) => {
           <tr key={item.id} className="text-center">
             <td className="border p-2">{item.id}</td>
 
-            {type === "sociales" && <td className="border p-2">{item.title}</td>}
+            {type === "sociales" && <td className="border p-2">{item.type}</td>}
             {type === "sociales" && (
               <td className="border p-2 truncate max-w-xs" title={item.url}>
-                {item.url}
+                {item.url || "—"}
               </td>
             )}
 

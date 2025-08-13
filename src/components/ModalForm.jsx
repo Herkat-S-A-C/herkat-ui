@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { updateSocialMedia } from "../services/socialMediaService";
 
 const ModalForm = ({ type, onClose, onSave, item }) => {
   const isBanner = type === "banner";
@@ -55,7 +56,7 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.id) return alert("El ID es obligatorio");
 
     let imageData = form.imagen;
@@ -66,21 +67,18 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     if (isBanner) {
       onSave({ id: form.id, image: imageData });
     } else if (isSocial) {
-      if (!form.nombre || !form.url)
-        return alert("Título y URL son obligatorios");
-      onSave({
-        id: form.id,
-        title: form.nombre,
-        url: form.url,
-        hoverColor: form.hoverColor,
-        icon: form.icon,
-      });
+      if (!form.url) return alert("La URL es obligatoria");
+
+      try {
+        await updateSocialMedia(form.tipo, { url: form.url });
+        onSave();
+      } catch (error) {
+        console.error("Error al actualizar red social:", error);
+        alert("Ocurrió un error al actualizar la red social");
+      }
     } else if (isTipo) {
       if (!form.nombre) return alert("Completa al menos ID y Nombre");
-      onSave({
-        id: form.id,
-        nombre: form.nombre,
-      });
+      onSave({ id: form.id, nombre: form.nombre });
     } else {
       if (!form.nombre) return alert("Completa al menos ID y Nombre");
       onSave({
@@ -147,11 +145,16 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
         {isSocial && (
           <>
             <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Título"
-              className="border p-2 w-full mb-2"
+              name="id"
+              value={form.id}
+              disabled
+              className="border p-2 w-full mb-2 bg-gray-100 cursor-not-allowed"
+            />
+            <input
+              name="tipo"
+              value={form.tipo}
+              disabled
+              className="border p-2 w-full mb-2 bg-gray-100 cursor-not-allowed"
             />
             <input
               name="url"
@@ -183,7 +186,7 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
           </>
         )}
 
-        {/* Productos / Servicios / Maquinaria */}
+        {/* Otros */}
         {!isBanner && !isSocial && !isTipo && (
           <>
             <input

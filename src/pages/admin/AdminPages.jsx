@@ -4,6 +4,7 @@ import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
 import HomePreview from "/src/components/HomePreview";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {getSocialMedia} from "/src/services/socialMediaService.js";
 
 const API_BASE = "https://herkat-api.onrender.com";
 
@@ -34,30 +35,31 @@ const AdminPage = () => {
 
   // Cargar datos desde la API
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let url;
-        if (selected === "sociales") {
-          // URL especial para redes sociales
-          url = "https://herkat-api.onrender.com/api/v1/social-media";
-        } else {
-          const endpoint = endpointsMap[selected];
-          url = `${API_BASE}/${endpoint}`;
-        }
+  const fetchData = async () => {
+    try {
+      let result;
 
-        const res = await fetch(url);
+      if (selected === "sociales") {
+        // Llamamos al método GET del servicio
+        result = await getSocialMedia();
+      } else {
+        const endpoint = endpointsMap[selected];
+        const res = await fetch(`${API_BASE}/${endpoint}`);
         const json = await res.json();
-
-        setData((prev) => ({
-          ...prev,
-          [selected]: Array.isArray(json) ? json : json.data || [],
-        }));
-      } catch (error) {
-        console.error(`Error cargando ${selected}:`, error);
+        result = Array.isArray(json) ? json : json.data || [];
       }
-    };
-    fetchData();
-  }, [selected]);
+
+      setData((prev) => ({
+        ...prev,
+        [selected]: result,
+      }));
+    } catch (error) {
+      console.error(`Error cargando ${selected}:`, error);
+    }
+  };
+
+  fetchData();
+}, [selected]);
 
   // Filtrado de datos
   const filteredData = Array.isArray(data[selected])
