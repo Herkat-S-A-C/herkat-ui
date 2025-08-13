@@ -1,21 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Sidebar from "/src/components/Sidebar";
 import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
 import HomePreview from "/src/components/HomePreview";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import {getSocialMedia} from "/src/services/socialMediaService.js";
 
-const API_BASE = "https://herkat-api.onrender.com";
-
-const endpointsMap = {
-  productos: "products",
-  servicios: "service-items",
-  maquinaria: "machines",
-  banner: "banners",
-  sociales: "social-media", // usaremos ruta especial para GET
-  tipos: "tipos",
-};
+// Servicios
+import { getSocialMedia } from "/src/services/socialMediaService.js";
+import { getAllProducts } from "/src/services/productsService.js";
+import { getAllServices } from "/src/services/servicesService.js";
+import { getAllMachines } from "/src/services/machineryService.js";
+import { getAllBanners } from "/src/services/bannerServices.js";
+import { getAllMachineTypes, deleteMachineType } from "/src/services/typeMachineryServices.js";
+import { getAllProductTypes, deleteProductType } from "/src/services/typeProductsServices.js";
+import { getAllServiceTypes, deleteServiceType } from "/src/services/typeServicesServices.js";
 
 const AdminPage = () => {
   const [data, setData] = useState({
@@ -24,8 +22,21 @@ const AdminPage = () => {
     servicios: [],
     maquinaria: [],
     sociales: [],
-    tipos: [],
+    ProductosTipos: [],
+    ServiciosTipos: [],
+    MaquinariaTipos: [],
   });
+
+  // Mapa de funciones de eliminación (memoizado)
+const deleteMap = useMemo(
+  () => ({
+    ProductosTipos: deleteProductType,
+    ServiciosTipos: deleteServiceType,
+    MaquinariaTipos: deleteMachineType,
+  }),
+  []
+);
+
 
   const [selected, setSelected] = useState("productos");
   const [search, setSearch] = useState("");
@@ -33,114 +44,69 @@ const AdminPage = () => {
   const [editItem, setEditItem] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
 
-  // Cargar datos desde la API
-  useEffect(() => {
-  const fetchData = async () => {
-    try {
-      let result;
+  // Mapa de servicios
+  const serviceMap = useMemo(
+    () => ({
+      productos: getAllProducts,
+      servicios: getAllServices,
+      maquinaria: getAllMachines,
+      banner: getAllBanners,
+      sociales: getSocialMedia,
+      ProductosTipos: getAllProductTypes,
+      ServiciosTipos: getAllServiceTypes,
+      MaquinariaTipos: getAllMachineTypes,
+    }),
+    []
+  );
 
-      if (selected === "sociales") {
-        // Llamamos al método GET del servicio
-        result = await getSocialMedia();
-      } else {
-        const endpoint = endpointsMap[selected];
-        const res = await fetch(`${API_BASE}/${endpoint}`);
-        const json = await res.json();
-        result = Array.isArray(json) ? json : json.data || [];
+  // Función para cargar datos
+  const fetchData = useCallback(
+    async (type) => {
+      try {
+        if (serviceMap[type]) {
+          const res = await serviceMap[type]();
+          setData((prev) => ({ ...prev, [type]: res }));
+        }
+      } catch (error) {
+        console.error(`Error cargando datos de ${type}:`, error);
       }
+    },
+    [serviceMap]
+  );
 
-      setData((prev) => ({
-        ...prev,
-        [selected]: result,
-      }));
-    } catch (error) {
-      console.error(`Error cargando ${selected}:`, error);
-    }
-  };
+  // Función para eliminar
+  const handleDelete = useCallback(
+    async (id) => {
+      try {
+        if (deleteMap[selected]) {
+          await deleteMap[selected](id);
+          await fetchData(selected);
+        } else {
+          console.warn(`No hay función de eliminación para ${selected}`);
+        }
+      } catch (error) {
+        console.error(`Error eliminando ${selected} con id ${id}:`, error);
+      }
+    },
+    [selected, deleteMap, fetchData]
+  );
 
-  fetchData();
-}, [selected]);
+  // Cargar al inicio y cuando cambie "selected"
+  useEffect(() => {
+    fetchData(selected);
+  }, [selected, fetchData]);
 
-  // Filtrado de datos
+  // Filtrar datos según búsqueda
   const filteredData = Array.isArray(data[selected])
     ? data[selected].filter((item) => {
-        if (selected === "banner") {
-          return String(item.id).toLowerCase().includes(search.toLowerCase());
-        }
-        if (selected === "tipos") {
-          const nameKey = item.nombre || "";
-          return (
-            nameKey.toLowerCase().includes(search.toLowerCase()) ||
-            String(item.id).toLowerCase().includes(search.toLowerCase())
-          );
-        }
-        if (selected === "sociales") {
-          const nameKey = item.title || "";
-          return (
-            nameKey.toLowerCase().includes(search.toLowerCase()) ||
-            String(item.id).toLowerCase().includes(search.toLowerCase())
-          );
-        }
-        const nameKey = item.title || item.nombre || "";
-        const idKey = String(item.id);
+        const nameKey = item.title || item.nombre || item.name || "";
+        const idKey = String(item.id || "");
         return (
           nameKey.toLowerCase().includes(search.toLowerCase()) ||
           idKey.toLowerCase().includes(search.toLowerCase())
         );
       })
     : [];
-
-  const handleSave = async (newItem) => {
-    const endpoint = endpointsMap[selected];
-    try {
-      if (editItem) {
-        // Editar
-        const res = await fetch(`${API_BASE}/${endpoint}/${editItem.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newItem),
-        });
-        if (!res.ok) throw new Error("Error al editar");
-      } else {
-        // Crear
-        const res = await fetch(`${API_BASE}/${endpoint}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newItem),
-        });
-        if (!res.ok) throw new Error("Error al crear");
-      }
-      // Recargar datos
-      const updatedRes = await fetch(`${API_BASE}/${endpoint}`);
-      const updatedJson = await updatedRes.json();
-      setData((prev) => ({
-        ...prev,
-        [selected]: Array.isArray(updatedJson)
-          ? updatedJson
-          : updatedJson.data || [],
-      }));
-    } catch (error) {
-      console.error("Error guardando:", error);
-    }
-    setEditItem(null);
-    setModalOpen(false);
-  };
-
-  const handleDelete = async (id) => {
-    const endpoint = endpointsMap[selected];
-    try {
-      const res = await fetch(`${API_BASE}/${endpoint}/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Error al eliminar");
-      setData((prev) => ({
-        ...prev,
-        [selected]: prev[selected].filter((item) => item.id !== id),
-      }));
-    } catch (error) {
-      console.error("Error eliminando:", error);
-    }
-  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -184,6 +150,7 @@ const AdminPage = () => {
           }}
           onDelete={handleDelete}
         />
+        
 
         {/* Botón Vista Previa */}
         <button
@@ -215,7 +182,10 @@ const AdminPage = () => {
           <ModalForm
             type={selected}
             onClose={() => setModalOpen(false)}
-            onSave={handleSave}
+            onSave={async () => {
+              await fetchData(selected);
+              setModalOpen(false);
+            }}
             item={editItem}
           />
         )}

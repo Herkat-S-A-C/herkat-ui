@@ -1,10 +1,21 @@
+// src/components/ModalForm.jsx
 import { useState, useEffect } from "react";
 import { updateSocialMedia } from "../services/socialMediaService";
 
-const ModalForm = ({ type, onClose, onSave, item }) => {
+// Servicios de tipos
+import { createMachineType, updateMachineType } from "../services/typeMachineryServices";
+import { createProductType, updateProductType } from "../services/typeProductsServices";
+import { createServiceType, updateServiceType } from "../services/typeServicesServices";
+
+const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   const isBanner = type === "banner";
   const isSocial = type === "sociales";
-  const isTipo = type === "tipos";
+  const isTipoProductos = type === "ProductosTipos";
+  const isTipoServicios = type === "ServiciosTipos";
+  const isTipoMaquinaria = type === "MaquinariaTipos";
+  const isProducto = type === "productos";
+  const isMaquinaria = type === "maquinarias";
+  const isServicio = type === "servicios";
 
   const [form, setForm] = useState({
     id: "",
@@ -17,28 +28,30 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     outstanding: "no",
     left: "no",
     url: "",
-    hoverColor: "",
-    icon: "",
   });
 
+  // Cargar datos si es edición
   useEffect(() => {
     if (item) {
       setForm({
         id: item.id || "",
-        nombre: item.title || item.nombre || "",
-        tipo: item.type || item.tipo || "",
-        capacidad: item.capacidad || "",
-        descripcion: item.description || item.descripcion || "",
-        imagen: item.image || item.imagen || "",
+        nombre: item.name || "",
+        tipo: item.type || "",
+        capacidad: item.capacity || "",
+        descripcion: item.description || "",
+        imagen: item.image || "",
         file: null,
         outstanding: item.outstanding || "no",
         left: item.left || "no",
         url: item.url || "",
-        hoverColor: item.hoverColor || "",
-        icon: item.icon || "",
       });
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        id: lastId ? String(Number(lastId) + 1) : "1",
+      }));
     }
-  }, [item]);
+  }, [item, lastId]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -60,37 +73,82 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
     if (!form.id) return alert("El ID es obligatorio");
 
     let imageData = form.imagen;
-    if (form.file) {
-      imageData = form.file;
-    }
+    if (form.file) imageData = form.file;
 
-    if (isBanner) {
-      onSave({ id: form.id, image: imageData });
-    } else if (isSocial) {
-      if (!form.url) return alert("La URL es obligatoria");
-
-      try {
+    try {
+      if (isBanner) {
+        onSave({ id: form.id, image: imageData });
+      } 
+      else if (isSocial) {
+        if (!form.url) return alert("La URL es obligatoria");
         await updateSocialMedia(form.tipo, { url: form.url });
         onSave();
-      } catch (error) {
-        console.error("Error al actualizar red social:", error);
-        alert("Ocurrió un error al actualizar la red social");
+        onClose();
+      } 
+      else if (isTipoProductos) {
+        if (!form.nombre) return alert("Completa el nombre del tipo");
+        if (item) {
+          await updateProductType(form.id, { name: form.nombre });
+        } else {
+          await createProductType({ name: form.nombre });
+        }
+        onSave();
+        onClose();
+      } 
+      else if (isTipoServicios) {
+        if (!form.nombre) return alert("Completa el nombre del tipo");
+        if (item) {
+          await updateServiceType(form.id, { name: form.nombre });
+        } else {
+          await createServiceType({ name: form.nombre });
+        }
+        onSave();
+        onClose();
+      } 
+      else if (isTipoMaquinaria) {
+        if (!form.nombre) return alert("Completa el nombre del tipo");
+        if (item) {
+          await updateMachineType(form.id, { name: form.nombre });
+        } else {
+          await createMachineType({ name: form.nombre });
+        }
+        onSave();
+        onClose();
+      } 
+      else if (isProducto) {
+        onSave({
+          id: form.id,
+          name: form.nombre,
+          type: form.tipo,
+          capacity: form.capacidad,
+          description: form.descripcion,
+          image: imageData,
+        });
+        onClose();
+      } 
+      else if (isMaquinaria) {
+        onSave({
+          id: form.id,
+          name: form.nombre,
+          type: form.tipo,
+          description: form.descripcion,
+          image: imageData,
+        });
+        onClose();
+      } 
+      else if (isServicio) {
+        onSave({
+          id: form.id,
+          name: form.nombre,
+          type: form.tipo,
+          description: form.descripcion,
+          image: imageData,
+        });
+        onClose();
       }
-    } else if (isTipo) {
-      if (!form.nombre) return alert("Completa al menos ID y Nombre");
-      onSave({ id: form.id, nombre: form.nombre });
-    } else {
-      if (!form.nombre) return alert("Completa al menos ID y Nombre");
-      onSave({
-        id: form.id,
-        title: form.nombre,
-        type: form.tipo,
-        capacidad: form.capacidad,
-        description: form.descripcion,
-        image: imageData,
-        outstanding: form.outstanding,
-        left: form.left,
-      });
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      alert("Ocurrió un error al guardar los datos");
     }
   };
 
@@ -103,175 +161,244 @@ const ModalForm = ({ type, onClose, onSave, item }) => {
             ? "Banner"
             : isSocial
             ? "Red Social"
-            : isTipo
-            ? "Tipo"
+            : isTipoProductos
+            ? "Tipo de Producto"
+            : isTipoServicios
+            ? "Tipo de Servicio"
+            : isTipoMaquinaria
+            ? "Tipo de Maquinaria"
+            : isProducto
+            ? "Producto"
+            : isMaquinaria
+            ? "Maquinaria"
+            : isServicio
+            ? "Servicio"
             : "Elemento"}
         </h2>
 
-        {/* Banner */}
-        {isBanner && (
-          <>
-            <input
-              name="id"
-              value={form.id}
-              onChange={handleChange}
-              placeholder="ID"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="imagen"
-              value={form.imagen}
-              onChange={handleChange}
-              placeholder="URL Imagen"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="border p-2 w-full mb-4"
-            />
-            {form.imagen && (
-              <img
-                src={form.file ? URL.createObjectURL(form.file) : form.imagen}
-                alt="Vista previa"
-                className="w-full h-40 object-cover rounded mb-4"
-              />
-            )}
-          </>
-        )}
+        {/* Campos para Tipos */}
+{(isTipoProductos || isTipoServicios || isTipoMaquinaria) && (
+  <>
+    {item && (
+      <input
+        name="id"
+        value={form.id}
+        disabled
+        className="border p-2 w-full mb-2 bg-gray-100"
+      />
+    )}
+    <input
+      name="nombre"
+      value={form.nombre}
+      onChange={handleChange}
+      placeholder="Nombre"
+      className="border p-2 w-full mb-2"
+    />
+  </>
+)}
 
-        {/* Redes Sociales */}
-        {isSocial && (
-          <>
-            <input
-              name="id"
-              value={form.id}
-              disabled
-              className="border p-2 w-full mb-2 bg-gray-100 cursor-not-allowed"
-            />
-            <input
-              name="tipo"
-              value={form.tipo}
-              disabled
-              className="border p-2 w-full mb-2 bg-gray-100 cursor-not-allowed"
-            />
-            <input
-              name="url"
-              value={form.url}
-              onChange={handleChange}
-              placeholder="URL"
-              className="border p-2 w-full mb-2"
-            />
-          </>
-        )}
+{/* Campos para Productos */}
+{isProducto && (
+  <>
+    {item && (
+      <input
+        name="id"
+        value={form.id}
+        disabled
+        className="border p-2 w-full mb-2 bg-gray-100"
+      />
+    )}
+    <input
+      name="nombre"
+      value={form.nombre}
+      onChange={handleChange}
+      placeholder="Nombre"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="tipo"
+      value={form.tipo}
+      onChange={handleChange}
+      placeholder="Tipo"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="capacidad"
+      value={form.capacidad}
+      onChange={handleChange}
+      placeholder="Capacidad"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="descripcion"
+      value={form.descripcion}
+      onChange={handleChange}
+      placeholder="Descripción"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="imagen"
+      value={form.imagen}
+      onChange={handleChange}
+      placeholder="URL Imagen"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleFileChange}
+      className="border p-2 w-full mb-4"
+    />
+    {form.imagen && (
+      <img
+        src={form.file ? URL.createObjectURL(form.file) : form.imagen}
+        alt="Vista previa"
+        className="w-full h-40 object-cover rounded mb-4"
+      />
+    )}
+  </>
+)}
 
-        {/* Tipos */}
-        {isTipo && (
-          <>
-            <input
-              name="id"
-              value={form.id}
-              onChange={handleChange}
-              placeholder="ID"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Nombre"
-              className="border p-2 w-full mb-2"
-            />
-          </>
-        )}
+{/* Campos para Redes sociales */}
+{isSocial && (
+  <>
+    {item && (
+      <>
+        {/* ID solo lectura */}
+        <input
+          name="id"
+          value={form.id}
+          disabled
+          className="border p-2 w-full mb-2 bg-gray-100"
+        />
+        {/* Solo URL editable */}
+        <input
+          name="url"
+          value={form.url}
+          onChange={handleChange}
+          placeholder="URL de la red social"
+          className="border p-2 w-full mb-2"
+        />
+      </>
+    )}
 
-        {/* Otros */}
-        {!isBanner && !isSocial && !isTipo && (
-          <>
-            <input
-              name="id"
-              value={form.id}
-              onChange={handleChange}
-              placeholder="ID"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Nombre"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="tipo"
-              value={form.tipo}
-              onChange={handleChange}
-              placeholder="Tipo"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="capacidad"
-              value={form.capacidad}
-              onChange={handleChange}
-              placeholder="Capacidad"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleChange}
-              placeholder="Descripción"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="imagen"
-              value={form.imagen}
-              onChange={handleChange}
-              placeholder="URL Imagen"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="border p-2 w-full mb-4"
-            />
-            {form.imagen && (
-              <img
-                src={form.file ? URL.createObjectURL(form.file) : form.imagen}
-                alt="Vista previa"
-                className="w-full h-40 object-cover rounded mb-4"
-              />
-            )}
-            <label className="block mb-2 font-semibold">¿Destacado?</label>
-            <select
-              name="outstanding"
-              value={form.outstanding}
-              onChange={handleChange}
-              className="border p-2 w-full mb-4"
-            >
-              <option value="si">Sí</option>
-              <option value="no">No</option>
-            </select>
-            {type === "servicios" && (
-              <>
-                <label className="block mb-2 font-semibold">
-                  ¿Ubicar a la izquierda?
-                </label>
-                <select
-                  name="left"
-                  value={form.left}
-                  onChange={handleChange}
-                  className="border p-2 w-full mb-4"
-                >
-                  <option value="sí">Sí</option>
-                  <option value="no">No</option>
-                </select>
-              </>
-            )}
-          </>
-        )}
+    {!item && (
+      <>
+        <input
+          name="nombre"
+          value={form.nombre}
+          onChange={handleChange}
+          placeholder="Nombre de la red social"
+          className="border p-2 w-full mb-2"
+        />
+        <input
+          name="url"
+          value={form.url}
+          onChange={handleChange}
+          placeholder="URL de la red social"
+          className="border p-2 w-full mb-2"
+        />
+      </>
+    )}
+  </>
+)}
+
+{/* Campos para Maquinaria y Servicios */}
+{(isMaquinaria || isServicio) && (
+  <>
+    {item && (
+      <input
+        name="id"
+        value={form.id}
+        disabled
+        className="border p-2 w-full mb-2 bg-gray-100"
+      />
+    )}
+    <input
+      name="nombre"
+      value={form.nombre}
+      onChange={handleChange}
+      placeholder="Nombre"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="tipo"
+      value={form.tipo}
+      onChange={handleChange}
+      placeholder="Tipo"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="descripcion"
+      value={form.descripcion}
+      onChange={handleChange}
+      placeholder="Descripción"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="imagen"
+      value={form.imagen}
+      onChange={handleChange}
+      placeholder="URL Imagen"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleFileChange}
+      className="border p-2 w-full mb-4"
+    />
+    {form.imagen && (
+      <img
+        src={form.file ? URL.createObjectURL(form.file) : form.imagen}
+        alt="Vista previa"
+        className="w-full h-40 object-cover rounded mb-4"
+      />
+    )}
+  </>
+)}
+
+{/* Campos para Banner */}
+{isBanner && (
+  <>
+    {item && (
+      <input
+        name="id"
+        value={form.id}
+        disabled
+        className="border p-2 w-full mb-2 bg-gray-100"
+      />
+    )}
+    <input
+      name="nombre"
+      value={form.nombre}
+      onChange={handleChange}
+      placeholder="Nombre"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      name="imagen"
+      value={form.imagen}
+      onChange={handleChange}
+      placeholder="URL Imagen"
+      className="border p-2 w-full mb-2"
+    />
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleFileChange}
+      className="border p-2 w-full mb-4"
+    />
+    {form.imagen && (
+      <img
+        src={form.file ? URL.createObjectURL(form.file) : form.imagen}
+        alt="Vista previa"
+        className="w-full h-40 object-cover rounded mb-4"
+      />
+    )}
+  </>
+)}
+
 
         <div className="flex justify-end gap-2">
           <button

@@ -1,45 +1,34 @@
 const Table = ({ data, type, onEdit, onDelete }) => {
+  const isTipo = ["ProductosTipos", "ServiciosTipos", "MaquinariaTipos"].includes(type);
+  const isSociales = type === "sociales";
+
   const renderEmptyTable = () => (
     <table className="w-full border border-gray-300">
       <thead>
         <tr className="bg-gray-200">
           <th className="border p-2">ID</th>
-          {type === "sociales" && <th className="border p-2">Tipo</th>}
-          {type === "sociales" && <th className="border p-2">URL</th>}
-          {type === "tipos" && <th className="border p-2">Nombre</th>}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Título</th>
+          {isTipo && <th className="border p-2">Nombre</th>}
+          {isSociales && (
+            <>
+              <th className="border p-2">Tipo</th>
+              <th className="border p-2">URL</th>
+            </>
           )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2 w-48">Descripción</th>
+          {!isTipo && !isSociales && type !== "banner" && (
+            <>
+              <th className="border p-2">Nombre</th>
+              <th className="border p-2">Tipo</th>
+              <th className="border p-2 w-48">Descripción</th>
+            </>
           )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Tipo</th>
-          )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Destacado</th>
-          )}
-          {type === "servicios" && <th className="border p-2">Izquierda</th>}
-          {type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Imagen</th>
-          )}
+          {!isTipo && !isSociales && <th className="border p-2">Imagen</th>}
           <th className="border p-2">Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td
-            colSpan={
-              type === "banner"
-                ? 3
-                : type === "servicios"
-                ? 8
-                : type === "sociales"
-                ? 3
-                : type === "tipos"
-                ? 2
-                : 7
-            }
+            colSpan={isTipo ? 3 : isSociales ? 3 : 5}
             className="p-4 text-gray-500 text-center"
           >
             No hay datos disponibles
@@ -50,101 +39,90 @@ const Table = ({ data, type, onEdit, onDelete }) => {
   );
 
   if (!data || data.length === 0) return renderEmptyTable();
-
+  /*posiciona los encabezados*/ 
   return (
     <table className="w-full border border-gray-300">
       <thead>
         <tr className="bg-gray-200">
           <th className="border p-2">ID</th>
-          {type === "sociales" && <th className="border p-2">Tipo</th>}
-          {type === "sociales" && <th className="border p-2">URL</th>}
-          {type === "tipos" && <th className="border p-2">Nombre</th>}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Título</th>
+          {isTipo && <th className="border p-2">Nombre</th>}
+          {isSociales && (
+            <>
+              <th className="border p-2">Tipo</th>
+              <th className="border p-2">URL</th>
+            </>
           )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2 w-48">Descripción</th>
+          {!isTipo && !isSociales && type !== "banner" && (
+            <>
+              <th className="border p-2">Nombre</th>
+              <th className="border p-2">Tipo</th>
+              <th className="border p-2 w-48">Descripción</th>
+            </>
           )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Tipo</th>
-          )}
-          {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Destacado</th>
-          )}
-          {type === "servicios" && <th className="border p-2">Izquierda</th>}
-          {type !== "sociales" && type !== "tipos" && (
-            <th className="border p-2">Imagen</th>
-          )}
+          {!isTipo && !isSociales && <th className="border p-2">Imagen</th>}
           <th className="border p-2">Acciones</th>
         </tr>
       </thead>
+
+      /*posiciona el contenido*/ 
       <tbody>
         {data.map((item) => (
           <tr key={item.id} className="text-center">
             <td className="border p-2">{item.id}</td>
 
-            {type === "sociales" && <td className="border p-2">{item.type}</td>}
-            {type === "sociales" && (
-              <td className="border p-2 truncate max-w-xs" title={item.url}>
-                {item.url || "—"}
-              </td>
+            {isTipo && <td className="border p-2">{item.name}</td>}
+            
+            {isSociales && (
+              <>
+                <td className="border p-2">{item.type || "—"}</td>
+                <td className="border p-2">{item.url || "—"}</td>
+              </>
             )}
 
-            {type === "tipos" && <td className="border p-2">{item.nombre}</td>}
+            {!isTipo && !isSociales && type !== "banner" && (
+              <>
+                <td className="border p-2">{item.name}</td>
+                <td className="border p-2">{item.type}</td>
+                <td
+                  className="border p-2 w-48 max-w-xs truncate"
+                  title={item.description}
+                >
+                  {item.description || "—"}
+                </td>
+              </>
+            )}
 
-            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-              <td className="border p-2">{item.title || item.nombre}</td>
-            )}
-            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-              <td
-                className="border p-2 w-48 max-w-xs truncate"
-                title={item.description || item.descripcion}
-              >
-                {item.description || item.descripcion}
-              </td>
-            )}
-            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
-              <td className="border p-2">{item.type || item.tipo}</td>
-            )}
-            {type !== "banner" && type !== "sociales" && type !== "tipos" && (
+            {!isTipo && !isSociales && (
               <td className="border p-2">
-                {item.outstanding === "si" ? "Sí" : "No"}
-              </td>
-            )}
-            {type === "servicios" && (
-              <td className="border p-2">{item.left === "sí" ? "Sí" : "No"}</td>
-            )}
-
-            {type !== "sociales" && type !== "tipos" && (
-              <td className="border p-2">
-                <img
-                  src={item.image || item.imagen}
-                  alt={item.title || item.nombre || `Banner ${item.id}`}
-                  className={
-                    type === "banner"
-                      ? "w-48 h-24 object-cover mx-auto"
-                      : "w-16 h-16 object-cover mx-auto"
-                  }
-                />
+                {item.image ? (
+                  <img
+                    src={item.image}
+                    alt={item.name || `Elemento ${item.id}`}
+                    className={
+                      type === "banner"
+                        ? "w-48 h-24 object-cover mx-auto"
+                        : "w-16 h-16 object-cover mx-auto"
+                    }
+                  />
+                ) : (
+                  "—"
+                )}
               </td>
             )}
 
             <td className="border p-2 space-x-2">
               <button
                 onClick={() => onEdit(item)}
-                className="bg-yellow-500 text-white px-3 py-1 rounded shadow-md transition transform duration-300 hover:scale-105 hover:shadow-lg active:translate-y-1"
+                className="bg-yellow-500 text-white px-3 py-1 rounded shadow-md hover:scale-105"
               >
                 Editar
               </button>
-
-              {type !== "sociales" && (
-                <button
-                  onClick={() => onDelete(item.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded shadow-md transition transform duration-300 hover:scale-105 hover:shadow-lg active:translate-y-1"
-                >
-                  Eliminar
-                </button>
-              )}
+              <button
+                onClick={() => onDelete(item.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded shadow-md hover:scale-105"
+              >
+                Eliminar
+              </button>
             </td>
           </tr>
         ))}
