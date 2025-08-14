@@ -2,6 +2,11 @@ import localBanner1 from "../assets/banners/banner-prueba-1.png";
 import localBanner2 from "../assets/banners/banner-prueba-2.png";
 import localBanner3 from "../assets/banners/banner-prueba-3.png";
 
+import localBottle1 from "../assets/bottles/botella-1.png";
+import localBottle2 from "../assets/bottles/botella-2.png";
+import localBottle3 from "../assets/bottles/botella-3.png";
+import localBottle4 from "../assets/bottles/botella-4.png";
+
 export const banner = [
   {
     id: 1,
@@ -23,7 +28,7 @@ export const products = [
     id: 1,
     title: "Botella 500ml",
     description: "Botella PET transparente de 500ml.",
-    image: "https://icemplast.com/wp-content/uploads/2020/12/ENVASES_AGUA_500ml.png",
+    image: localBottle1,
     type: "botella",
     outstanding: "si"
   },
@@ -31,7 +36,7 @@ export const products = [
     id: 2,
     title: "Botella 1L",
     description: "Botella PET azul de 1 litro.",
-    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
+    image: localBottle2,
     type: "botella",
     outstanding: "si"
   },
@@ -39,7 +44,7 @@ export const products = [
     id: 3,
     title: "Botella 2L",
     description: "Botella PET gris de 2 litros.",
-    image: "https://us.123rf.com/450wm/jckca/jckca0804/jckca080400006/2813992-empty-two-liter-bottle-on-white.jpg",
+    image: localBottle3,
     type: "botella",
     outstanding: "si"
   },
@@ -49,7 +54,7 @@ export const products = [
     id: 4,
     title: "Tapa Rosca Azul",
     description: "Tapa para botella estándar de rosca color azul.",
-    image: "https://envasesyplasticosuperior.com/wp-content/uploads/2023/12/TAPA-28-MM-AZUL-BIC-800x799-1.jpg",
+    image: localBottle4,
     type: "tapa",
     outstanding: "si"
   },
@@ -57,7 +62,7 @@ export const products = [
     id: 5,
     title: "Tapa Rosca Blanca",
     description: "Tapa estándar color blanco, segura y hermética.",
-    image: "https://soloenvases.com/wp-content/uploads/2023/06/0024TPBL28.jpg",
+    image: localBottle1,
     type: "tapa",
     outstanding: "si"
   },
@@ -67,7 +72,7 @@ export const products = [
     id: 6,
     title: "Envase 5L",
     description: "Envase PET de 5 litros, ideal para químicos.",
-    image: "https://www.perezlinares.com/wp-content/uploads/2024/09/15-JERRYCAN-ENVASE-5-LITROS-BLANCO-300x300.jpg",
+    image: localBottle2,
     type: "envase",
     outstanding: "si"
   },
@@ -75,7 +80,7 @@ export const products = [
     id: 7,
     title: "Envase 10L Industrial",
     description: "Envase resistente para líquidos industriales.",
-    image: "https://www.envases.mx/media/2834/product-range-extension530x354_4.jpg",
+    image: localBottle3,
     type: "envase",
     outstanding: "si"
   },
@@ -83,7 +88,7 @@ export const products = [
     id: 8,
     title: "Botella Deportiva",
     description: "Botella plástica para uso deportivo, ligera.",
-    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
+    image: localBottle4,
     type: "botella",
     outstanding: "si"
   },
@@ -91,7 +96,7 @@ export const products = [
     id: 9,
     title: "Botella Deportiva",
     description: "Botella plástica para uso deportivo, ligera.",
-    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
+    image: localBottle1,
     type: "botella",
     outstanding: "si"
   },
@@ -99,7 +104,7 @@ export const products = [
     id: 10,
     title: "Botella Deportiva",
     description: "Botella plástica para uso deportivo, ligera.",
-    image: "https://taino.pe/cdn/shop/files/Diseno_sin_titulo_-_2024-01-06T132243.123-removebg-preview.png?v=1704565404",
+    image: localBottle2,
     type: "botella",
     outstanding: "si"
   }

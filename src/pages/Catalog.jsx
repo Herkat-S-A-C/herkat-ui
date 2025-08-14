@@ -1,6 +1,6 @@
 import Layout from "../components/Layout";
 import CardItem from "../components/CardItem";
-import CardServices from "../components/CardServices";
+import CardServices from "../components/CardService";
 import { useParams } from "react-router-dom";
 import { products, services, machinery } from "../constants/dataItems.js";
 import { useRef, useState } from "react";

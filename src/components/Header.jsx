@@ -44,7 +44,7 @@ export default function Header() {
 
   return (
     <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-md sticky top-0 z-50 w-full">
-      <div className="w-full px-6 py-3 flex justify-between items-center">
+      <div className="w-full px-12 py-4 flex justify-between items-center">
         {/* Logo */}
         <NavLink to="/" className="flex items-center">
           <img
@@ -70,7 +70,7 @@ export default function Header() {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `px-5 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg hover:-translate-y-1 ${
+                `px-5 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg hover:-translate-y-2 ${
                   isActive
                     ? "bg-white text-blue-700"
                     : "border border-white text-white hover:bg-white hover:text-blue-700"
@@ -84,7 +84,7 @@ export default function Header() {
           {/* Login */}
           <NavLink
             to="/login"
-            className="flex items-center justify-center w-12 h-12 text-white rounded-full transition-all duration-300 hover:bg-white hover:text-blue-700 hover:-translate-y-1 hover:shadow-lg"
+            className="flex items-center justify-center w-12 h-12 text-white rounded-full transition-all duration-300 hover:bg-white hover:text-blue-700 hover:-translate-y-2 hover:shadow-lg"
           >
             <span className="material-symbols-rounded text-4xl">
               account_circle
