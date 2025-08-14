@@ -3,7 +3,7 @@ function CardItem({ title, description, image }) {
   return (
     <div
       className="relative bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-80 cursor-pointer
-                 transition-shadow duration-300 ease-in-out hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:bg-gray-50"
+                 transition-shadow duration-300 ease-in-out hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:bg-white"
       tabIndex={-1}
     >
       <img

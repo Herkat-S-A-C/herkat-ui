@@ -7,6 +7,11 @@ import localBottle2 from "../assets/bottles/botella-2.png";
 import localBottle3 from "../assets/bottles/botella-3.png";
 import localBottle4 from "../assets/bottles/botella-4.png";
 
+import localMachine1 from "../assets/machines/maquina-1.png";
+import localMachine2 from "../assets/machines/maquina-2.png";
+import localMachine3 from "../assets/machines/maquina-3.png";
+import localMachine4 from "../assets/machines/maquina-4.png";
+
 export const banner = [
   {
     id: 1,
@@ -196,7 +201,7 @@ export const machinery = [
     id: 1,
     title: "Sopladora Automática",
     description: "Máquina para fabricar botellas desde preformas.",
-    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
+    image: localMachine1,
     type: "sopladora",
     outstanding: "si"
   },
@@ -204,7 +209,7 @@ export const machinery = [
     id: 2,
     title: "Mini Sopladora Manual",
     description: "Versión compacta y operada manualmente.",
-    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
+    image: localMachine2,
     type: "sopladora",
     outstanding: "no"
   },
@@ -212,7 +217,7 @@ export const machinery = [
     id: 3,
     title: "Selladora de Banda",
     description: "Sellado automático de envases en línea.",
-    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
+    image: localMachine3,
     type: "selladora",
     outstanding: "no"
   },
@@ -220,7 +225,7 @@ export const machinery = [
     id: 4,
     title: "Selladora de Inducción",
     description: "Sellado hermético para tapas con inducción.",
-    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
+    image: localMachine4,
     type: "selladora",
     outstanding: "si"
   },
@@ -228,7 +233,7 @@ export const machinery = [
     id: 5,
     title: "Impresora de Etiquetas",
     description: "Impresora térmica para etiquetas de productos.",
-    image: "https://pet-eu.com/wp-content/uploads/2019/12/APF-3002-1.png",
+    image: localMachine1,
     type: "impresora",
     outstanding: "no"
   },
@@ -236,7 +241,7 @@ export const machinery = [
     id: 6,
     title: "Impresora de Códigos QR",
     description: "Ideal para seguimiento y trazabilidad.",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
+    image: localMachine2,
     type: "impresora",
     outstanding: "si"
   },
@@ -244,7 +249,7 @@ export const machinery = [
     id: 7,
     title: "Dosificadora de Líquidos",
     description: "Precisión en el llenado de botellas.",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
+    image: localMachine3,
     type: "sopladora",
     outstanding: "no"
   },
@@ -252,7 +257,7 @@ export const machinery = [
     id: 8,
     title: "Moldeadora de Tapas",
     description: "La Moldeadora de Tapas Plásticas es un equipo industrial diseñado para la fabricación eficiente y uniforme de tapas de plástico, utilizadas comúnmente en botellas, envases y otros recipientes. Su tecnología avanzada permite un proceso de moldeado preciso, garantizando un sellado seguro y resistente que cumple con los estándares de calidad del sector. Este equipo es ideal para empresas del rubro de embalaje, envasado, fabricación de productos plásticos, alimentario y farmacéutico, donde se requiere producción en serie con alta eficiencia.",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXGE6IX8EaDqyXuf9w2S_0_O7D2_uQnuWYTA&s",
+    image: localMachine4,
     type: "selladora",
     outstanding: "si"
   }

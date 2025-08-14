@@ -146,29 +146,46 @@ function Home() {
 
       {/* Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full relative shadow-lg">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={closeModal} // si hacen click fuera, cierra
+        >
+          <div
+            className="bg-white rounded-lg max-w-4xl w-full relative shadow-lg p-8"
+            onClick={(e) => e.stopPropagation()} // evita que el click dentro lo cierre
+          >
+            {/* Botón cerrar */}
             <button
               onClick={closeModal}
-              className="absolute top-3 right-3 text-gray-600 hover:text-red-500 focus:outline-none focus:ring-0"
+              className="absolute top-4 right-4 text-gray-600 hover:text-red-500 hover:scale-150 focus:outline-none focus:ring-0"
               aria-label="Cerrar modal"
             >
-              <FaTimes size={20} />
+              <FaTimes size={24} />
             </button>
-            <img
-              src={selectedItem.image}
-              alt={selectedItem.title}
-              className="w-full h-64 object-cover rounded mb-4"
-            />
-            <h3 className="text-xl font-semibold mb-2">{selectedItem.title}</h3>
-            <p className="text-gray-600">{selectedItem.description}</p>
+
+            {/* Contenido en columnas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Imagen */}
+              <img
+                src={selectedItem.image}
+                alt={selectedItem.title}
+                className="w-full h-80 object-cover rounded"
+              />
+
+              {/* Texto */}
+              <div className="flex flex-col justify-center">
+                <h3 className="text-2xl font-semibold mb-4">{selectedItem.title}</h3>
+                <p className="text-gray-600 text-lg">{selectedItem.description}</p>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
+
       {/* Productos */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
           Productos destacados
         </h2>
 
@@ -220,36 +237,36 @@ function Home() {
       </section>
 
       {/* Servicios */}
-<section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
-  <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-    Servicios destacados
-  </h2>
+      <section className="mt-2 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          Servicios destacados
+        </h2>
 
-  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {serviciosDestacados.map((item) => (
-      <div
-        key={item.id}
-        tabIndex={0}
-        onClick={() => openModal(item)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") openModal(item);
-        }}
-        className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
-      >
-        <CardService
-          title={item.title}
-          description={item.description}
-          image={item.image}
-        />
-      </div>
-    ))}
-  </div>
-</section>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {serviciosDestacados.map((item) => (
+            <div
+              key={item.id}
+              tabIndex={0}
+              onClick={() => openModal(item)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") openModal(item);
+              }}
+              className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+            >
+              <CardService
+                title={item.title}
+                description={item.description}
+                image={item.image}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
 
 
       {/* Maquinarias */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
           Maquinarias destacadas
         </h2>
 
@@ -301,7 +318,7 @@ function Home() {
 
 
       {/* Ubicación / Mapa */}
-      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
+      <section className="mt-2 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           ¿Dónde estamos ubicados?
         </h2>
