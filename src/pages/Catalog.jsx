@@ -1,6 +1,6 @@
 import Layout from "../components/Layout";
 import CardItem from "../components/CardItem";
-import CardServices from "../components/CardService";
+import CardService from "../components/CardService";
 import { useParams } from "react-router-dom";
 import { products, services, machinery } from "../constants/dataItems.js";
 import { useRef, useState } from "react";
@@ -91,7 +91,7 @@ function Catalog() {
           type === "servicios" ? (
             <div className="grid grid-cols-1 gap-4 px-4 md:px-[100px]">
               {items.map((item) => (
-                <CardServices
+                <CardService
                   key={item.id}
                   title={item.title}
                   description={item.description}

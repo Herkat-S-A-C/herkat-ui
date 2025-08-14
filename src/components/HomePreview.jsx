@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import CardItem from "../components/CardItem";
-import CardServices from "../components/CardServices";
+import CardService from "../components/CardService";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const HomePreview = ({ banner, productos, servicios, maquinaria }) => {
@@ -71,7 +71,7 @@ const HomePreview = ({ banner, productos, servicios, maquinaria }) => {
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Servicios destacados</h2>
           <div className="grid grid-cols-1 gap-4">
             {serviciosDestacados.map((item) => (
-              <CardServices
+              <CardService
                 key={item.id}
                 image={item.image}
                 title={item.title}
