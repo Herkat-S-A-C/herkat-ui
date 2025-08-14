@@ -6,7 +6,7 @@ import Banner from "../components/Banner";
 import ButtonWhatsApp from "../components/ButtonWhatsApp";
 import { products, services, machinery, banner } from "../constants/dataItems";
 import { useEffect, useState, useRef } from "react";
-import CardServices from "../components/CardServices";
+import CardService from "../components/CardService";
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
 
 function Home() {
@@ -185,8 +185,9 @@ function Home() {
         <div
           id="productos"
           ref={productosRef}
-          className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-visible gap-6 scroll-smooth no-scrollbar w-full"
+          className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full"
         >
+
           {productosDestacados.map((item) => (
             <div
               key={item.id}
@@ -219,40 +220,53 @@ function Home() {
       </section>
 
       {/* Servicios */}
-      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] bg-gray-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Servicios destacados
-        </h2>
-        <div className="grid grid-cols-1 gap-6">
-          {serviciosDestacados.map((item) => (
-            <CardServices
-              key={item.id}
-              image={item.image}
-              title={item.title}
-              description={item.description}
-              reverse={item.left === "no"}
-            />
-          ))}
-        </div>
-      </section>
+<section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
+  <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+    Servicios destacados
+  </h2>
+
+  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {serviciosDestacados.map((item) => (
+      <div
+        key={item.id}
+        tabIndex={0}
+        onClick={() => openModal(item)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") openModal(item);
+        }}
+        className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+      >
+        <CardService
+          title={item.title}
+          description={item.description}
+          image={item.image}
+        />
+      </div>
+    ))}
+  </div>
+</section>
+
 
       {/* Maquinarias */}
-      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] relative bg-gray-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+      <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Maquinarias destacadas
         </h2>
+
+        {/* Botón izquierda */}
         <button
           onClick={() => scrollLeft("maquinarias")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10
-          focus:outline-none focus:ring-0"
-          aria-label="Desplazar maquinarias a la izquierda"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center 
+      z-20 hover:scale-125 transition-transform duration-300 ease-in-out focus:outline-none"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
+
+        {/* Contenedor scrollable */}
         <div
           id="maquinarias"
           ref={maquinariasRef}
-          className="pt-2 px-1.5 relative flex overflow-x-auto gap-4 scroll-smooth no-scrollbar w-full z-0 overflow-visible"
+          className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full"
         >
           {maquinariaDestacada.map((item) => (
             <div
@@ -262,10 +276,9 @@ function Home() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") openModal(item);
               }}
-              className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer
-                focus:outline-none focus:ring-0 no-outline rounded-lg"
-              role="button"
-              aria-label={`Ver detalles de ${item.title}`}
+              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer
+                   transition-transform duration-300 ease-in-out
+                   hover:scale-110 hover:z-50"
             >
               <CardItem
                 title={item.title}
@@ -275,15 +288,17 @@ function Home() {
             </div>
           ))}
         </div>
+
+        {/* Botón derecha */}
         <button
           onClick={() => scrollRight("maquinarias")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:bg-blue-100 w-10 h-10 items-center justify-center z-10
-          focus:outline-none focus:ring-0"
-          aria-label="Desplazar maquinarias a la derecha"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center
+      z-20 hover:scale-125 transition-transform duration-300 ease-in-out focus:outline-none"
         >
           <FaChevronRight className="text-blue-800" />
         </button>
       </section>
+
 
       {/* Ubicación / Mapa */}
       <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
