@@ -40,7 +40,7 @@ export const getProductByName = async (name) => {
 // Crear un nuevo producto (requiere permisos de admin)
 export const createProduct = async (productData) => {
   try {
-    const response = await fetch(API_BASE_URL, {
+    const response = await fetch(`${API_BASE_URL}/products`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(productData),
