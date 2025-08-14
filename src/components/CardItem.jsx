@@ -9,7 +9,7 @@ function CardItem({ title, description, image }) {
       <img
         src={image}
         alt={title}
-        className="h-48 w-full object-contain bg-gray-100"
+        className="h-48 w-full object-contain bg-white"
       />
       <div className="p-4 flex flex-col justify-between flex-1">
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 h-[3.5rem]">

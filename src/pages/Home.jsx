@@ -166,22 +166,23 @@ function Home() {
             {/* Contenido en columnas */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Imagen */}
-              <img
-                src={selectedItem.image}
-                alt={selectedItem.title}
-                className="w-full h-80 object-cover rounded"
-              />
+              <div className="flex items-center justify-center">
+                <img
+                  src={selectedItem.image}
+                  alt={selectedItem.title}
+                  className="w-full h-full object-cover rounded"
+                />
+              </div>
 
               {/* Texto */}
               <div className="flex flex-col justify-center">
                 <h3 className="text-2xl font-semibold mb-4">{selectedItem.title}</h3>
-                <p className="text-gray-600 text-lg">{selectedItem.description}</p>
+                <p className="text-gray-600 text-lg text-justify">{selectedItem.description}</p>
               </div>
             </div>
           </div>
         </div>
       )}
-
 
       {/* Productos */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
@@ -242,7 +243,7 @@ function Home() {
           Servicios destacados
         </h2>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {serviciosDestacados.map((item) => (
             <div
               key={item.id}

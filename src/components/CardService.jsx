@@ -8,7 +8,7 @@ function CardService({ title, description, image }) {
       <img
         src={image}
         alt={title}
-        className="h-56 w-full object-cover"
+        className="w-full h-full object-cover bg-white"
       />
       <div className="p-4 flex flex-col justify-between flex-1">
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 h-[2.5rem]">
