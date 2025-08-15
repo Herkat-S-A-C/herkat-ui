@@ -2,18 +2,12 @@
 import { useState, useEffect } from "react";
 import { formConfig } from "../constants/formconfig";
 
-// Servicios de actualización
+// Servicios
 import { updateSocialMedia } from "../services/socialMediaService";
-
-// Tipos
 import { getAllProductTypes, createProductType, updateProductType } from "../services/typeProductsServices";
 import { getAllMachineTypes, createMachineType, updateMachineType } from "../services/typeMachineryServices";
 import { createServiceType, updateServiceType } from "../services/typeServicesServices";
-
-// Productos
 import { createProduct, updateProduct } from "../services/productsService";
-
-// Maquinarias
 import { createMachine, updateMachine } from "../services/machineryService";
 
 const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
@@ -40,10 +34,10 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
       setForm({
         id: item.id || "",
         nombre: item.name || "",
-        tipo: item.type?.id || "",
+        tipo: item.typeId || "", // 👈 Guardamos el ID del tipo, no el nombre
         capacidad: item.capacity || "",
         descripcion: item.description || "",
-        imagen: item.image?.url || "",
+        imagen: item.imageUrl || "",
         file: null,
         outstanding: item.outstanding || "no",
         left: item.left || "no",
@@ -76,69 +70,83 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     try {
       if (isBanner) {
         onSave({ id: form.id, image: form.imagen });
-      } else if (isSocial) {
+      } 
+      else if (isSocial) {
         if (!form.url) return alert("La URL es obligatoria");
         await updateSocialMedia(form.tipo, { url: form.url });
-        onSave(); onClose();
+        onSave();
+        onClose();
       } 
       else if (type === "ProductosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
           ? await updateProductType(form.id, { name: form.nombre })
           : await createProductType({ name: form.nombre });
-        onSave(); onClose();
+        onSave();
+        onClose();
       } 
       else if (type === "ServiciosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
           ? await updateServiceType(form.id, { name: form.nombre })
           : await createServiceType({ name: form.nombre });
-        onSave(); onClose();
+        onSave();
+        onClose();
       } 
       else if (type === "MaquinariaTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
           ? await updateMachineType(form.id, { name: form.nombre })
           : await createMachineType({ name: form.nombre });
-        onSave(); onClose();
+        onSave();
+        onClose();
       } 
       else if (type === "productos") {
         if (!form.nombre) return alert("Completa el nombre del producto");
-        const productPayload = {
-          name: form.nombre,
-          type: { id: parseInt(form.tipo) },
-          capacity: parseFloat(form.capacidad),
-          description: form.descripcion,
-          image: { url: form.imagen },
-        };
+        if (!form.tipo) return alert("Selecciona un tipo de producto");
+
+        const formData = new FormData();
+        formData.append("name", form.nombre);
+        formData.append("typeId", form.tipo); // 👈 Usamos el ID
+        formData.append("capacity", parseFloat(form.capacidad) || 0);
+        formData.append("description", form.descripcion || "");
+        if (form.file) formData.append("image", form.file);
+
         item
-          ? await updateProduct(form.id, productPayload)
-          : await createProduct(productPayload);
-        onSave(); onClose();
+          ? await updateProduct(form.id, formData)
+          : await createProduct(formData);
+
+        onSave();
+        onClose();
       } 
       else if (type === "maquinaria") {
         if (!form.nombre) return alert("Completa el nombre de la maquinaria");
         if (!form.tipo) return alert("Selecciona un tipo de maquinaria");
-        const machinePayload = {
-          name: form.nombre,
-          type: { id: parseInt(form.tipo) },
-          description: form.descripcion,
-          image: { url: form.imagen },
-        };
+
+        const formData = new FormData();
+        formData.append("name", form.nombre);
+        formData.append("typeId", form.tipo); // 👈 Usamos el ID
+        formData.append("description", form.descripcion || "");
+        if (form.file) formData.append("image", form.file);
+
         item
-          ? await updateMachine(form.id, machinePayload)
-          : await createMachine(machinePayload);
-        onSave(); onClose();
+          ? await updateMachine(form.id, formData)
+          : await createMachine(formData);
+
+        onSave();
+        onClose();
       } 
       else if (type === "servicios") {
         if (!form.nombre) return alert("Completa el nombre del servicio");
         if (!form.descripcion) return alert("Agrega una descripción");
-        const servicePayload = {
-          name: form.nombre,
-          description: form.descripcion,
-          image: { url: form.imagen },
-        };
-        onSave(servicePayload); onClose();
+
+        const formData = new FormData();
+        formData.append("name", form.nombre);
+        formData.append("description", form.descripcion || "");
+        if (form.file) formData.append("image", form.file);
+
+        onSave(formData);
+        onClose();
       }
     } catch (error) {
       console.error("❌ Error al guardar:", error.response?.data || error.message);
@@ -155,7 +163,6 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
           {item ? "Editar" : "Registrar"} {type}
         </h2>
 
-        {/* Render dinámico de inputs */}
         {fields.map((field) => {
           if (field.type === "text" || field.type === "number") {
             return (
@@ -236,7 +243,6 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   );
 };
 
-// Componente de subida de imagen
 const UploadImage = ({ form, handleFileChange, inputId }) => (
   <>
     <div

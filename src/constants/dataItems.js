@@ -33,7 +33,7 @@ export const products = [
     id: 1,
     title: "Botella 500ml",
     description: "Botella PET transparente de 500ml.",
-    image: localBottle1,
+    image: "https://drive.google.com/file/d/1SZNOPyZre512zeFqHA1Fu05pm6b6bjRT/view?usp=sharing",
     type: "botella",
     outstanding: "si"
   },
@@ -122,7 +122,7 @@ export const services = [
     id: 1,
     title: "Diseño de Moldes",
     description: "Creamos moldes personalizados para tus productos.",
-    image: "https://d2n4wb9orp1vta.cloudfront.net/cms/brand/PT-Mex/2024-PT-Mex/soplado-abril.jpg;maxWidth=1200",
+    image: "https://drive.google.com/file/d/1SZNOPyZre512zeFqHA1Fu05pm6b6bjRT/view?usp=drive_link",
     type: "diseño",
     outstanding: "si",
     left: "sí"
