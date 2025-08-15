@@ -1,6 +1,6 @@
 // src/components/ModalForm.jsx
 import { useState, useEffect } from "react";
-import { formConfig } from "../constants/formConfig";
+import { formConfig } from "../constants/formconfig";
 
 // Servicios de actualización
 import { updateSocialMedia } from "../services/socialMediaService";
