@@ -1,55 +1,42 @@
 // src/components/ModalForm.jsx
 import { useState, useEffect } from "react";
+import { formConfig } from "../constants/formConfig";
+
+// Servicios de actualización
 import { updateSocialMedia } from "../services/socialMediaService";
-import { getAllProductTypes } from "/src/services/typeProductsServices.js";
-// Servicios
-import { createProduct, updateProduct } from "../services/productsService";
-import { createMachineType, updateMachineType } from "../services/typeMachineryServices";
-import { createProductType, updateProductType } from "../services/typeProductsServices";
+
+// Tipos
+import { getAllProductTypes, createProductType, updateProductType } from "../services/typeProductsServices";
+import { getAllMachineTypes, createMachineType, updateMachineType } from "../services/typeMachineryServices";
 import { createServiceType, updateServiceType } from "../services/typeServicesServices";
+
+// Productos
+import { createProduct, updateProduct } from "../services/productsService";
+
+// Maquinarias
+import { createMachine, updateMachine } from "../services/machineryService";
 
 const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   const isBanner = type === "banner";
   const isSocial = type === "sociales";
-  const isTipoProductos = type === "ProductosTipos";
-  const isTipoServicios = type === "ServiciosTipos";
-  const isTipoMaquinaria = type === "MaquinariaTipos";
-  const isProducto = type === "productos";
-  const isMaquinaria = type === "maquinarias";
-  const isServicio = type === "servicios";
 
-  const [form, setForm] = useState({
-    id: "",
-    nombre: "",
-    tipo: "",
-    capacidad: "",
-    descripcion: "",
-    imagen: "",
-    file: null,
-    outstanding: "no",
-    left: "no",
-    url: "",
-  });
-
-  // 👉 Lista de tipos de producto para el combo
+  const [form, setForm] = useState({});
   const [productTypes, setProductTypes] = useState([]);
+  const [machineTypes, setMachineTypes] = useState([]);
 
+  // cargar tipos dinámicos
   useEffect(() => {
-    if (isProducto) {
-      console.log("📥 Cargando tipos de productos...");
-      getAllProductTypes()
-        .then((data) => {
-          console.log("✅ Tipos de productos cargados:", data);
-          setProductTypes(data);
-        })
-        .catch((err) => console.error("❌ Error cargando tipos de productos:", err));
+    if (type === "productos") {
+      getAllProductTypes().then(setProductTypes).catch(console.error);
     }
-  }, [isProducto]);
+    if (type === "maquinaria") {
+      getAllMachineTypes().then(setMachineTypes).catch(console.error);
+    }
+  }, [type]);
 
-  // Cargar datos si es edición
+  // cargar item en edición
   useEffect(() => {
     if (item) {
-      console.log("✏️ Editando item recibido en props:", item);
       setForm({
         id: item.id || "",
         nombre: item.name || "",
@@ -64,91 +51,59 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
       });
     } else {
       const newId =
-        isProducto
-          ? "" 
+        ["productos", "maquinaria", "servicios"].includes(type)
+          ? ""
           : lastId
           ? String(Number(lastId) + 1)
           : "1";
-
-      console.log("🆕 Nuevo registro, ID generado:", newId);
-
-      setForm((prev) => ({
-        ...prev,
-        id: newId,
-      }));
+      setForm({ id: newId });
     }
-  }, [item, lastId, isProducto]);
+  }, [item, lastId, type]);
 
-  const handleChange = (e) => {
-    console.log(`✏️ Campo cambiado: ${e.target.name} = ${e.target.value}`);
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log("📂 Archivo seleccionado:", file);
     setForm({ ...form, file });
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        console.log("🖼️ Imagen convertida en base64");
-        setForm((prev) => ({ ...prev, imagen: reader.result }));
-      };
+      reader.onloadend = () => setForm((prev) => ({ ...prev, imagen: reader.result }));
       reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async () => {
-    console.log("🚀 Enviando formulario con datos:", form);
-
-    if (!isProducto && !form.id) {
-      alert("El ID es obligatorio");
-      return;
-    }
-
     try {
       if (isBanner) {
-        console.log("➡️ Guardando Banner...");
         onSave({ id: form.id, image: form.imagen });
       } else if (isSocial) {
         if (!form.url) return alert("La URL es obligatoria");
-        console.log("➡️ Guardando Red Social...");
         await updateSocialMedia(form.tipo, { url: form.url });
-        onSave();
-        onClose();
-      } else if (isTipoProductos) {
-        console.log("➡️ Guardando Tipo de Producto...");
+        onSave(); onClose();
+      } 
+      else if (type === "ProductosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
-        if (item) {
-          await updateProductType(form.id, { name: form.nombre });
-        } else {
-          await createProductType({ name: form.nombre });
-        }
-        onSave();
-        onClose();
-      } else if (isTipoServicios) {
-        console.log("➡️ Guardando Tipo de Servicio...");
+        item
+          ? await updateProductType(form.id, { name: form.nombre })
+          : await createProductType({ name: form.nombre });
+        onSave(); onClose();
+      } 
+      else if (type === "ServiciosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
-        if (item) {
-          await updateServiceType(form.id, { name: form.nombre });
-        } else {
-          await createServiceType({ name: form.nombre });
-        }
-        onSave();
-        onClose();
-      } else if (isTipoMaquinaria) {
-        console.log("➡️ Guardando Tipo de Maquinaria...");
+        item
+          ? await updateServiceType(form.id, { name: form.nombre })
+          : await createServiceType({ name: form.nombre });
+        onSave(); onClose();
+      } 
+      else if (type === "MaquinariaTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
-        if (item) {
-          await updateMachineType(form.id, { name: form.nombre });
-        } else {
-          await createMachineType({ name: form.nombre });
-        }
-        onSave();
-        onClose();
-      } else if (isProducto) {
+        item
+          ? await updateMachineType(form.id, { name: form.nombre })
+          : await createMachineType({ name: form.nombre });
+        onSave(); onClose();
+      } 
+      else if (type === "productos") {
         if (!form.nombre) return alert("Completa el nombre del producto");
-
         const productPayload = {
           name: form.nombre,
           type: { id: parseInt(form.tipo) },
@@ -156,39 +111,34 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
           description: form.descripcion,
           image: { url: form.imagen },
         };
-
-        console.log("📦 Payload del producto a enviar:", productPayload);
-
-        if (item) {
-          console.log("✏️ Actualizando producto con ID:", form.id);
-          await updateProduct(form.id, productPayload);
-        } else {
-          console.log("🆕 Creando producto...");
-          await createProduct(productPayload);
-        }
-        console.log("✅ Producto guardado correctamente");
-        onSave();
-        onClose();
-      } else if (isMaquinaria) {
-        console.log("➡️ Guardando Maquinaria...");
-        onSave({
-          id: form.id,
+        item
+          ? await updateProduct(form.id, productPayload)
+          : await createProduct(productPayload);
+        onSave(); onClose();
+      } 
+      else if (type === "maquinaria") {
+        if (!form.nombre) return alert("Completa el nombre de la maquinaria");
+        if (!form.tipo) return alert("Selecciona un tipo de maquinaria");
+        const machinePayload = {
           name: form.nombre,
-          type: form.tipo,
+          type: { id: parseInt(form.tipo) },
           description: form.descripcion,
-          image: form.imagen,
-        });
-        onClose();
-      } else if (isServicio) {
-        console.log("➡️ Guardando Servicio...");
-        onSave({
-          id: form.id,
+          image: { url: form.imagen },
+        };
+        item
+          ? await updateMachine(form.id, machinePayload)
+          : await createMachine(machinePayload);
+        onSave(); onClose();
+      } 
+      else if (type === "servicios") {
+        if (!form.nombre) return alert("Completa el nombre del servicio");
+        if (!form.descripcion) return alert("Agrega una descripción");
+        const servicePayload = {
           name: form.nombre,
-          type: form.tipo,
           description: form.descripcion,
-          image: form.imagen,
-        });
-        onClose();
+          image: { url: form.imagen },
+        };
+        onSave(servicePayload); onClose();
       }
     } catch (error) {
       console.error("❌ Error al guardar:", error.response?.data || error.message);
@@ -196,132 +146,88 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     }
   };
 
+  const fields = formConfig[type] || [];
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded shadow-lg w-96 max-h-[90vh] overflow-auto">
         <h2 className="text-xl font-bold mb-4">
-          {item ? "Editar" : "Registrar"}{" "}
-          {isBanner
-            ? "Banner"
-            : isSocial
-            ? "Red Social"
-            : isTipoProductos
-            ? "Tipo de Producto"
-            : isTipoServicios
-            ? "Tipo de Servicio"
-            : isTipoMaquinaria
-            ? "Tipo de Maquinaria"
-            : isProducto
-            ? "Producto"
-            : isMaquinaria
-            ? "Maquinaria"
-            : isServicio
-            ? "Servicio"
-            : "Elemento"}
+          {item ? "Editar" : "Registrar"} {type}
         </h2>
 
-        {/* Campos para Tipos */}
-        {(isTipoProductos || isTipoServicios || isTipoMaquinaria) && (
-          <>
-            {item && (
+        {/* Render dinámico de inputs */}
+        {fields.map((field) => {
+          if (field.type === "text" || field.type === "number") {
+            return (
               <input
-                name="id"
-                value={form.id}
-                disabled
-                className="border p-2 w-full mb-2 bg-gray-100"
+                key={field.name}
+                name={field.name}
+                type={field.type}
+                value={form[field.name] || ""}
+                onChange={handleChange}
+                placeholder={field.label}
+                className="border p-2 w-full mb-2"
               />
-            )}
-            <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Nombre"
-              className="border p-2 w-full mb-2"
-            />
-          </>
-        )}
+            );
+          }
 
-        {/* Campos para Productos */}
-        {isProducto && (
-          <>
-            {item && (
-              <input
-                name="id"
-                value={form.id}
-                disabled
-                className="border p-2 w-full mb-2 bg-gray-100"
+          if (field.type === "textarea") {
+            return (
+              <textarea
+                key={field.name}
+                name={field.name}
+                value={form[field.name] || ""}
+                onChange={handleChange}
+                placeholder={field.label}
+                className="border p-2 w-full mb-2"
               />
-            )}
-            <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Nombre"
-              className="border p-2 w-full mb-2"
-            />
+            );
+          }
 
-            <select
-              name="tipo"
-              value={form.tipo}
-              onChange={handleChange}
-              className="border p-2 w-full mb-2"
-            >
-              <option value="">Seleccione un tipo</option>
-              {productTypes.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
+          if (field.type === "select") {
+            const options =
+              field.optionsSource === "productTypes"
+                ? productTypes
+                : field.optionsSource === "machineTypes"
+                ? machineTypes
+                : [];
+            return (
+              <select
+                key={field.name}
+                name={field.name}
+                value={form[field.name] || ""}
+                onChange={handleChange}
+                className="border p-2 w-full mb-2"
+              >
+                <option value="">Seleccione {field.label}</option>
+                {options.map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.name}
+                  </option>
+                ))}
+              </select>
+            );
+          }
 
-            <input
-              name="capacidad"
-              value={form.capacidad}
-              onChange={handleChange}
-              placeholder="Capacidad"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleChange}
-              placeholder="Descripción"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              name="imagen"
-              value={form.imagen}
-              onChange={handleChange}
-              placeholder="URL Imagen"
-              className="border p-2 w-full mb-2"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="border p-2 w-full mb-4"
-            />
-            {form.imagen && (
-              <img
-                src={form.file ? URL.createObjectURL(form.file) : form.imagen}
-                alt="Vista previa"
-                className="w-full h-40 object-cover rounded mb-4"
+          if (field.type === "image") {
+            return (
+              <UploadImage
+                key={field.name}
+                form={form}
+                handleFileChange={handleFileChange}
+                inputId={`fileInput-${field.name}`}
               />
-            )}
-          </>
-        )}
+            );
+          }
 
-        <div className="flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="bg-gray-400 text-white px-4 py-2 rounded"
-          >
+          return null;
+        })}
+
+        <div className="flex justify-end gap-2 mt-4">
+          <button onClick={onClose} className="bg-gray-400 text-white px-4 py-2 rounded">
             Cancelar
           </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
+          <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded">
             {item ? "Guardar" : "Agregar"}
           </button>
         </div>
@@ -329,5 +235,33 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     </div>
   );
 };
+
+// Componente de subida de imagen
+const UploadImage = ({ form, handleFileChange, inputId }) => (
+  <>
+    <div
+      className="border-2 border-dashed p-4 text-center mb-4 rounded cursor-pointer"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file) handleFileChange({ target: { files: [file] } });
+      }}
+    >
+      <p className="text-gray-500">Arrastra una imagen aquí o haz clic para seleccionarla</p>
+      <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id={inputId} />
+      <label htmlFor={inputId} className="bg-blue-500 text-white px-3 py-1 rounded cursor-pointer mt-2 inline-block">
+        Seleccionar archivo
+      </label>
+    </div>
+    {form.imagen && (
+      <img
+        src={form.file ? URL.createObjectURL(form.file) : form.imagen}
+        alt="Vista previa"
+        className="w-full h-40 object-cover rounded mb-4"
+      />
+    )}
+  </>
+);
 
 export default ModalForm;

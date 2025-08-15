@@ -7,13 +7,34 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // Servicios
 import { getSocialMedia } from "/src/services/socialMediaService.js";
-import { getAllProducts } from "/src/services/productsService.js";
-import { getAllServices } from "/src/services/servicesService.js";
-import { getAllMachines } from "/src/services/machineryService.js";
-import { getAllBanners } from "/src/services/bannerServices.js";
-import { getAllMachineTypes, deleteMachineType } from "/src/services/typeMachineryServices.js";
-import { getAllProductTypes, deleteProductType } from "/src/services/typeProductsServices.js";
-import { getAllServiceTypes, deleteServiceType } from "/src/services/typeServicesServices.js";
+import {
+  getAllProducts,
+  deleteProduct,
+} from "/src/services/productsService.js";
+import {
+  getAllServices,
+  deleteService,
+} from "/src/services/servicesService.js";
+import {
+  getAllMachines,
+  deleteMachine,
+} from "/src/services/machineryService.js";
+import {
+  getAllBanners,
+  deleteBanner,
+} from "/src/services/bannerServices.js";
+import {
+  getAllMachineTypes,
+  deleteMachineType,
+} from "/src/services/typeMachineryServices.js";
+import {
+  getAllProductTypes,
+  deleteProductType,
+} from "/src/services/typeProductsServices.js";
+import {
+  getAllServiceTypes,
+  deleteServiceType,
+} from "/src/services/typeServicesServices.js";
 
 const AdminPage = () => {
   const [data, setData] = useState({
@@ -27,16 +48,19 @@ const AdminPage = () => {
     MaquinariaTipos: [],
   });
 
-  // Mapa de funciones de eliminación (memoizado)
-const deleteMap = useMemo(
-  () => ({
-    ProductosTipos: deleteProductType,
-    ServiciosTipos: deleteServiceType,
-    MaquinariaTipos: deleteMachineType,
-  }),
-  []
-);
-
+  // Mapa de funciones de eliminación (incluye banner, maquinaria, servicios)
+  const deleteMap = useMemo(
+    () => ({
+      ProductosTipos: deleteProductType,
+      ServiciosTipos: deleteServiceType,
+      MaquinariaTipos: deleteMachineType,
+      productos: deleteProduct,
+      servicios: deleteService,
+      maquinaria: deleteMachine,
+      banner: deleteBanner,
+    }),
+    []
+  );
 
   const [selected, setSelected] = useState("productos");
   const [search, setSearch] = useState("");
@@ -44,7 +68,7 @@ const deleteMap = useMemo(
   const [editItem, setEditItem] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
 
-  // Mapa de servicios
+  // Mapa de servicios (incluye banner, maquinaria, servicios)
   const serviceMap = useMemo(
     () => ({
       productos: getAllProducts,
@@ -150,7 +174,6 @@ const deleteMap = useMemo(
           }}
           onDelete={handleDelete}
         />
-        
 
         {/* Botón Vista Previa */}
         <button
