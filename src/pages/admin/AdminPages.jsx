@@ -48,7 +48,19 @@ const AdminPage = () => {
     MaquinariaTipos: [],
   });
 
-  // Mapa de funciones de eliminación (incluye banner, maquinaria, servicios)
+  // 📌 Mapa de títulos legibles
+  const titleMap = {
+    productos: "Productos",
+    servicios: "Servicios",
+    maquinaria: "Maquinaria",
+    banner: "Banners",
+    sociales: "Redes sociales",
+    ProductosTipos: "Tipos de productos",
+    ServiciosTipos: "Tipos de servicios",
+    MaquinariaTipos: "Tipos de maquinaria",
+  };
+
+  // Mapa de funciones de eliminación
   const deleteMap = useMemo(
     () => ({
       ProductosTipos: deleteProductType,
@@ -68,7 +80,7 @@ const AdminPage = () => {
   const [editItem, setEditItem] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
 
-  // Mapa de servicios (incluye banner, maquinaria, servicios)
+  // Mapa de servicios
   const serviceMap = useMemo(
     () => ({
       productos: getAllProducts,
@@ -139,26 +151,38 @@ const AdminPage = () => {
       <div className="flex-1 p-6">
         {/* Encabezado */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold capitalize text-gray-800">
-            {selected}
+          <h1 className="text-3xl font-bold text-gray-800">
+            {titleMap[selected] || selected}
           </h1>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="p-2 px-4 rounded-xl border border-gray-300 shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+
+          <div className="flex gap-4 items-center">
+            {/* Search box */}
+            {selected !== "sociales" && (
+              <div className="relative group transition-all duration-500 ease-out">
+                <span className="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  search
+                </span>
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  className="pl-10 pr-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white outline-none transition-all duration-500 ease-out
+                   w-40 group-hover:w-80 focus-within:w-80"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            )}
+
+            {/* Botón Registrar */}
             {selected !== "sociales" && (
               <button
-                className="bg-gradient-to-br from-blue-500 to-blue-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:ring-2 hover:ring-indigo-400 hover:bg-blue-500 transform transition-transform hover:scale-[1.02]"
+                className="bg-blue-500 text-white font-bold px-8 py-3 rounded-xl shadow-md transform transition-all duration-200 hover:scale-[1.15] hover:shadow-lg"
                 onClick={() => {
                   setModalOpen(true);
                   setEditItem(null);
                 }}
               >
-                Registrar +
+                Registrar
               </button>
             )}
           </div>
