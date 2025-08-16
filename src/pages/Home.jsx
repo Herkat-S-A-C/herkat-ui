@@ -230,7 +230,7 @@ function Home() {
             <div
               key={item.id}
               onClick={() => openModal(item)}
-              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-50"
+              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-20"
             >
               <CardItem {...item} />
             </div>
