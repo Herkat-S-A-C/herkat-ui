@@ -1,24 +1,26 @@
 // src/components/ModalForm.jsx
 import { useState, useEffect } from "react";
-import { formConfig } from "../constants/formconfig";
+import { formConfig } from "../constants/formConfig";
 
-// Servicios
+// Servicios API
 import { updateSocialMedia } from "../services/socialMediaService";
 import { getAllProductTypes, createProductType, updateProductType } from "../services/typeProductsServices";
 import { getAllMachineTypes, createMachineType, updateMachineType } from "../services/typeMachineryServices";
-import { createServiceType, updateServiceType } from "../services/typeServicesServices";
+import { getAllServiceTypes, createServiceType, updateServiceType } from "../services/typeServicesServices";
 import { createProduct, updateProduct } from "../services/productsService";
 import { createMachine, updateMachine } from "../services/machineryService";
+import { createService, updateService } from "../services/servicesService";
+import { createBanner, updateBanner } from "../services/bannerServices";
 
 const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   const isBanner = type === "banner";
   const isSocial = type === "sociales";
-
   const [form, setForm] = useState({});
   const [productTypes, setProductTypes] = useState([]);
   const [machineTypes, setMachineTypes] = useState([]);
+  const [serviceTypes, setServiceTypes] = useState([]);
 
-  // cargar tipos dinámicos
+  // Cargar listas dinámicas
   useEffect(() => {
     if (type === "productos") {
       getAllProductTypes().then(setProductTypes).catch(console.error);
@@ -26,15 +28,18 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     if (type === "maquinaria") {
       getAllMachineTypes().then(setMachineTypes).catch(console.error);
     }
+    if (type === "servicios") {
+      getAllServiceTypes().then(setServiceTypes).catch(console.error);
+    }
   }, [type]);
 
-  // cargar item en edición
+  // Prellenar si está en edición
   useEffect(() => {
     if (item) {
       setForm({
         id: item.id || "",
         nombre: item.name || "",
-        tipo: item.typeId || "", // 👈 Guardamos el ID del tipo, no el nombre
+        tipo: item.typeId || "",
         capacidad: item.capacity || "",
         descripcion: item.description || "",
         imagen: item.imageUrl || "",
@@ -68,46 +73,69 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
 
   const handleSubmit = async () => {
     try {
+      // 📌 Banner: solo nombre + imagen
       if (isBanner) {
-        onSave({ id: form.id, image: form.imagen });
-      } 
-      else if (isSocial) {
+        if (!form.nombre) return alert("Completa el nombre del banner");
+        if (!form.file && !item) return alert("Selecciona una imagen para el banner");
+
+        const formData = new FormData();
+        formData.append("name", form.nombre);
+        if (form.file) formData.append("image", form.file);
+
+        item
+          ? await updateBanner(form.id, formData)
+          : await createBanner(formData);
+
+        onSave();
+        return onClose();
+      }
+
+      // 📌 Redes sociales
+      if (isSocial) {
         if (!form.url) return alert("La URL es obligatoria");
         await updateSocialMedia(form.tipo, { url: form.url });
         onSave();
-        onClose();
-      } 
-      else if (type === "ProductosTipos") {
+        return onClose();
+      }
+
+      // 📌 Tipos de producto
+      if (type === "ProductosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
           ? await updateProductType(form.id, { name: form.nombre })
           : await createProductType({ name: form.nombre });
         onSave();
-        onClose();
-      } 
-      else if (type === "ServiciosTipos") {
+        return onClose();
+      }
+
+      // 📌 Tipos de servicio
+      if (type === "ServiciosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
           ? await updateServiceType(form.id, { name: form.nombre })
           : await createServiceType({ name: form.nombre });
         onSave();
-        onClose();
-      } 
-      else if (type === "MaquinariaTipos") {
+        return onClose();
+      }
+
+      // 📌 Tipos de maquinaria
+      if (type === "MaquinariaTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
           ? await updateMachineType(form.id, { name: form.nombre })
           : await createMachineType({ name: form.nombre });
         onSave();
-        onClose();
-      } 
-      else if (type === "productos") {
+        return onClose();
+      }
+
+      // 📌 Productos
+      if (type === "productos") {
         if (!form.nombre) return alert("Completa el nombre del producto");
         if (!form.tipo) return alert("Selecciona un tipo de producto");
 
         const formData = new FormData();
         formData.append("name", form.nombre);
-        formData.append("typeId", form.tipo); // 👈 Usamos el ID
+        formData.append("typeId", form.tipo);
         formData.append("capacity", parseFloat(form.capacidad) || 0);
         formData.append("description", form.descripcion || "");
         if (form.file) formData.append("image", form.file);
@@ -117,15 +145,17 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
           : await createProduct(formData);
 
         onSave();
-        onClose();
-      } 
-      else if (type === "maquinaria") {
+        return onClose();
+      }
+
+      // 📌 Maquinaria
+      if (type === "maquinaria") {
         if (!form.nombre) return alert("Completa el nombre de la maquinaria");
         if (!form.tipo) return alert("Selecciona un tipo de maquinaria");
 
         const formData = new FormData();
         formData.append("name", form.nombre);
-        formData.append("typeId", form.tipo); // 👈 Usamos el ID
+        formData.append("typeId", form.tipo);
         formData.append("description", form.descripcion || "");
         if (form.file) formData.append("image", form.file);
 
@@ -134,19 +164,26 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
           : await createMachine(formData);
 
         onSave();
-        onClose();
-      } 
-      else if (type === "servicios") {
+        return onClose();
+      }
+
+      // 📌 Servicios
+      if (type === "servicios") {
         if (!form.nombre) return alert("Completa el nombre del servicio");
-        if (!form.descripcion) return alert("Agrega una descripción");
+        if (!form.tipo) return alert("Selecciona un tipo de servicio");
 
         const formData = new FormData();
         formData.append("name", form.nombre);
+        formData.append("typeId", form.tipo);
         formData.append("description", form.descripcion || "");
         if (form.file) formData.append("image", form.file);
 
-        onSave(formData);
-        onClose();
+        item
+          ? await updateService(form.id, formData)
+          : await createService(formData);
+
+        onSave();
+        return onClose();
       }
     } catch (error) {
       console.error("❌ Error al guardar:", error.response?.data || error.message);
@@ -197,6 +234,8 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
                 ? productTypes
                 : field.optionsSource === "machineTypes"
                 ? machineTypes
+                : field.optionsSource === "serviceTypes"
+                ? serviceTypes
                 : [];
             return (
               <select

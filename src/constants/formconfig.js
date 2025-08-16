@@ -1,4 +1,4 @@
-// src/constans/formConfig.js
+// src/constants/formConfig.js
 export const formConfig = {
   // --------- TIPOS ---------
   ProductosTipos: [
@@ -18,7 +18,7 @@ export const formConfig = {
       name: "tipo", 
       label: "Tipo de producto", 
       type: "select", 
-      optionsSource: "productTypes", // se llena con getAllProductTypes()
+      optionsSource: "productTypes",
       required: true 
     },
     { name: "capacidad", label: "Capacidad", type: "number" },
@@ -32,16 +32,29 @@ export const formConfig = {
       name: "tipo", 
       label: "Tipo de maquinaria", 
       type: "select", 
-      optionsSource: "machineTypes", // se llena con getAllMachineTypes()
+      optionsSource: "machineTypes",
       required: true 
     },
-    { name: "descripcion", label: "Descripción", type: "textarea", required: true },
+    { name: "descripcion", label: "Descripción", type: "textarea" },
     { name: "imagen", label: "Imagen", type: "image" },
   ],
 
   servicios: [
     { name: "nombre", label: "Nombre del servicio", type: "text", required: true },
-    { name: "descripcion", label: "Descripción", type: "textarea", required: true },
+    { 
+      name: "tipo", 
+      label: "Tipo de servicio", 
+      type: "select", 
+      optionsSource: "serviceTypes",
+      required: true 
+    },
+    { name: "descripcion", label: "Descripción", type: "textarea" },
     { name: "imagen", label: "Imagen", type: "image" },
+  ],
+
+  // --------- BANNER ---------
+  banner: [
+    { name: "nombre", label: "Nombre del banner", type: "text", required: true },
+    { name: "imagen", label: "Imagen", type: "image", required: true },
   ],
 };

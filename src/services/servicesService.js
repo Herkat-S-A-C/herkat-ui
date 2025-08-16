@@ -1,114 +1,81 @@
-/* src/services/servicesServices.js */
-const API_BASE_URL = "https://herkat-api.onrender.com/api/v1";
+// src/services/servicesServices.js
+import axios from "axios";
 
-/**
- * Listar todos los servicios
- */
+// ✅ URL base de la API
+const API_BASE_URL = "https://herkat-api.onrender.com/api/v1/service-items";
+
+// ✅ Instancia de Axios
+const api = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// 📌 Función auxiliar para manejar errores
+const handleError = (error, message) => {
+  console.error(message, error?.response?.data || error.message);
+  throw error;
+};
+
+// 📌 Obtener todos los servicios
 export const getAllServices = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/service-items`);
-    if (!response.ok) {
-      throw new Error("Error al obtener los servicios");
-    }
-    return await response.json();
+    // ❗ Sin "/" final, para que quede exactamente /api/v1/service-items
+    const { data } = await api.get("");
+    return data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    handleError(error, "Error al obtener los servicios:");
   }
 };
 
-/**
- * Obtener detalle de un servicio por su ID
- * @param {string} id 
- */
+// 📌 Obtener servicio por ID
 export const getServiceById = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/service-items/id/${id}`);
-    if (!response.ok) {
-      throw new Error("Error al obtener el servicio por ID");
-    }
-    return await response.json();
+    const { data } = await api.get(`/id/${id}`);
+    return data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    handleError(error, `Error al obtener servicio con ID ${id}:`);
   }
 };
 
-/**
- * Obtener detalle de un servicio por su nombre
- * @param {string} name 
- */
+// 📌 Obtener servicio por nombre
 export const getServiceByName = async (name) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/service-items/name/${name}`);
-    if (!response.ok) {
-      throw new Error("Error al obtener el servicio por nombre");
-    }
-    return await response.json();
+    const { data } = await api.get(`/name/${encodeURIComponent(name)}`);
+    return data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    handleError(error, `Error al obtener servicio con nombre ${name}:`);
   }
 };
 
-/**
- * Crear un nuevo servicio (admin)
- * @param {object} data 
- */
-export const createService = async (data) => {
+// 📌 Crear un nuevo servicio (admin)
+export const createService = async (formData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/service-items`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+    const { data } = await api.post("", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
-    if (!response.ok) {
-      throw new Error("Error al crear el servicio");
-    }
-    return await response.json();
+    return data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    handleError(error, "Error al crear servicio:");
   }
 };
 
-/**
- * Actualizar un servicio por ID (admin)
- * @param {string} id 
- * @param {object} data 
- */
-export const updateService = async (id, data) => {
+// 📌 Actualizar un servicio por ID (admin)
+export const updateService = async (id, formData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/service-items/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+    const { data } = await api.put(`/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
-    if (!response.ok) {
-      throw new Error("Error al actualizar el servicio");
-    }
-    return await response.json();
+    return data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    handleError(error, `Error al actualizar servicio con ID ${id}:`);
   }
 };
 
-/**
- * Eliminar un servicio por ID (admin)
- * @param {string} id 
- */
+// 📌 Eliminar un servicio (admin)
 export const deleteService = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/service-items/${id}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) {
-      throw new Error("Error al eliminar el servicio");
-    }
-    return await response.json();
+    const { data } = await api.delete(`/${id}`);
+    return data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    handleError(error, `Error al eliminar servicio con ID ${id}:`);
   }
 };
