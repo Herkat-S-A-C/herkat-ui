@@ -1,8 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@tailwindcss/line-clamp
 
+/* si usas el plugin line-clamp, se configura en tailwind.config.js, 
+   no aquí, así que eliminamos esta línea mal puesta:
+   @tailwindcss/line-clamp
+*/
+
+/* Quitar scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -16,4 +21,14 @@
 .no-outline:focus-visible {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* 👇 Fix para que los inputs autofill se mantengan transparentes */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 9999s ease-in-out 0s;
 }
