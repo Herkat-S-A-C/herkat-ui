@@ -1,23 +1,28 @@
+// Catalog.jsx
 import Layout from "../components/Layout";
 import CardItem from "../components/CardItem";
 import CardService from "../components/CardService";
 import { useParams } from "react-router-dom";
-import { products, services, machinery } from "../constants/dataItems.js";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
 
-// Modal mejorado
+// importaciones de servicios
+import { getAllProducts } from "/src/services/productsService.js";
+import { getAllServices } from "/src/services/servicesService.js";
+import { getAllMachines } from "/src/services/machineryService.js";
+
+// -------------------- Modal mejorado --------------------
 function Modal({ item, onClose }) {
   if (!item) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      onClick={onClose} // cierra al hacer click fuera
+      onClick={onClose}
     >
       <div
         className="bg-white rounded-lg max-w-4xl w-full relative shadow-lg p-8"
-        onClick={(e) => e.stopPropagation()} // evita que el click dentro cierre
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Botón cerrar */}
         <button
@@ -30,19 +35,31 @@ function Modal({ item, onClose }) {
 
         {/* Contenido en columnas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Imagen 16:9 */}
+          {/* Imagen */}
           <div className="flex items-center justify-center">
             <img
-              src={item.image}
-              alt={item.title}
+              src={item.imageUrl || item.image || "/placeholder-service.png"}
+              alt={item.name}
               className="w-full h-full object-cover rounded"
             />
           </div>
 
           {/* Texto */}
           <div className="flex flex-col justify-center">
-            <h3 className="text-2xl font-semibold mb-4">{item.title}</h3>
-            <p className="text-gray-600 text-lg text-justify">{item.description}</p>
+            <h3 className="text-2xl font-semibold mb-4">{item.name}</h3>
+            <p className="text-gray-600 text-lg text-justify">
+              {item.description}
+            </p>
+
+            {/* Capacidad (solo si existe, ej: productos/maquinaria) */}
+            {item.capacity && (
+              <p className="mt-4 text-lg font-medium text-blue-800">
+                Capacidad:{" "}
+                {item.capacity >= 1000
+                  ? `${(item.capacity / 1000).toFixed(1)} L`
+                  : `${item.capacity} ml`}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -50,47 +67,70 @@ function Modal({ item, onClose }) {
   );
 }
 
+// -------------------- Catálogo --------------------
 function Catalog() {
   const { type } = useParams();
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [items, setItems] = useState([]);
 
-  const dataMap = {
-    productos: products,
-    servicios: services,
-    maquinaria: machinery,
-  };
+  // Fetch a la API según tipo (usando servicios)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let data = [];
 
-  const items = dataMap[type?.toLowerCase()] || [];
+        if (type === "productos") data = await getAllProducts();
+        else if (type === "servicios") data = await getAllServices();
+        else if (type === "maquinaria") data = await getAllMachines();
 
+        setItems(Array.isArray(data) ? data : data?.content || data?.items || []);
+      } catch (error) {
+        console.error("❌ Error al cargar datos:", error);
+        setItems([]);
+      }
+    };
+
+    fetchData();
+  }, [type]);
+
+  // Filtro búsqueda
   const filteredItems = items.filter((item) => {
     const term = searchTerm.toLowerCase();
     return (
-      item.title.toLowerCase().includes(term) ||
-      item.type.toLowerCase().includes(term)
+      item.name?.toLowerCase().includes(term) ||
+      item.category?.toLowerCase().includes(term)
     );
   });
 
-  const groupedItems = filteredItems.reduce((acc, item) => {
-    acc[item.type] = acc[item.type] || [];
-    acc[item.type].push(item);
-    return acc;
-  }, {});
+  // Agrupar por categoría (para productos/maquinaria)
+  const groupedItems =
+    type !== "servicios"
+      ? filteredItems.reduce((acc, item) => {
+          const cat = item.category || "Otros";
+          acc[cat] = acc[cat] || [];
+          acc[cat].push(item);
+          return acc;
+        }, {})
+      : {};
 
-  // ---- Scroll como en Home ----
+  // ---- Scroll carrusel ----
   const scrollRefs = useRef({});
   const scrollAnimRef = useRef(new Map());
 
-  const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+  const easeInOutQuad = (t) =>
+    t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
   const smoothScrollBy = (container, distance, duration = 500) => {
     if (!container) return;
-
     const prevAnim = scrollAnimRef.current.get(container);
     if (prevAnim) cancelAnimationFrame(prevAnim);
 
     const start = container.scrollLeft;
-    const maxLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+    const maxLeft = Math.max(
+      0,
+      container.scrollWidth - container.clientWidth
+    );
     const end = Math.max(0, Math.min(start + distance, maxLeft));
     const startTime = performance.now();
 
@@ -114,7 +154,9 @@ function Catalog() {
 
   const getCardWidth = (container) => {
     if (!container) return 0;
-    const firstChild = Array.from(container.children).find((c) => c.nodeType === 1);
+    const firstChild = Array.from(container.children).find(
+      (c) => c.nodeType === 1
+    );
     if (!firstChild) return 0;
     const style = window.getComputedStyle(container);
     const gapRaw =
@@ -142,6 +184,7 @@ function Catalog() {
     if (!cardWidth) return;
     smoothScrollBy(container, cardWidth);
   };
+
   // -----------------------------
 
   return (
@@ -149,41 +192,38 @@ function Catalog() {
       <div className="min-h-screen bg-gray-100">
         {/* Título + barra de búsqueda */}
         <div className="px-4 md:px-6 pt-8 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold capitalize">{type}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold capitalize">
+            {type}
+          </h1>
 
           {type !== "servicios" && (
             <input
               type="text"
-              placeholder="Buscar por nombre o tipo..."
+              placeholder="Buscar por nombre o categoría..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500
-              transition duration-200"
+              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
             />
           )}
         </div>
 
         {items.length > 0 ? (
           type === "servicios" ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4 md:px-[150px] overflow-visible pb-20">
-              {items.map((item) => (
+            // 🔹 Servicios igual que en Home.jsx
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] overflow-visible pb-20">
+              {filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105 hover:z-10 hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)]
-                  transform-origin-center
-                  overflow-hidden"
+                  className="cursor-pointer hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
                   onClick={() => setSelectedItem(item)}
                 >
                   <CardService
-                    title={item.title}
+                    name={item.name}
                     description={item.description}
-                    image={item.image}
-                    reverse={item.id % 2 === 0}
+                    imageUrl={item.imageUrl || item.image || "/placeholder-service.png"}
                   />
                 </div>
-
               ))}
-
             </div>
           ) : (
             <>
@@ -197,8 +237,7 @@ function Catalog() {
                     {/* Botón izquierda */}
                     <button
                       onClick={() => scrollLeft(subtipo)}
-                      className="hidden md:flex absolute left-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125
-                      transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
+                      className="hidden md:flex absolute left-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
                     >
                       <FaChevronLeft className="text-blue-800" />
                     </button>
@@ -211,40 +250,41 @@ function Catalog() {
                       {itemsSubgrupo.map((item) => (
                         <div
                           key={item.id}
-                          className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer transition-transform duration-300 ease-in-out
-                          hover:scale-110 hover:z-10"
+                          className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110 hover:z-10"
                           onClick={() => setSelectedItem(item)}
                         >
                           <CardItem
-                            title={item.title}
+                            name={item.name}
                             description={item.description}
-                            image={item.image}
+                            imageUrl={item.imageUrl || item.image || "/placeholder.png"}
+                            capacity={item.capacity}
                           />
                         </div>
                       ))}
                     </div>
 
-
                     {/* Botón derecha */}
                     <button
                       onClick={() => scrollRight(subtipo)}
-                      className="hidden md:flex absolute right-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border
-      hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
+                      className="hidden md:flex absolute right-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
                     >
                       <FaChevronRight className="text-blue-800" />
                     </button>
                   </div>
                 </section>
-
               ))}
             </>
           )
         ) : (
-          <p className="text-gray-500 px-4">No hay elementos en esta categoría.</p>
+          <p className="text-gray-500 px-4">
+            No hay elementos en esta categoría.
+          </p>
         )}
       </div>
 
-      {selectedItem && <Modal item={selectedItem} onClose={() => setSelectedItem(null)} />}
+      {selectedItem && (
+        <Modal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      )}
     </Layout>
   );
 }

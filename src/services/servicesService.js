@@ -1,4 +1,4 @@
-// src/services/servicesServices.js
+// src/services/servicesService.js
 import axios from "axios";
 
 // ✅ URL base de la API
@@ -18,7 +18,7 @@ const handleError = (error, message) => {
 // 📌 Obtener todos los servicios
 export const getAllServices = async () => {
   try {
-    // ❗ Sin "/" final, para que quede exactamente /api/v1/service-items
+    // ❗ Sin "/" final → queda exactamente /api/v1/service-items
     const { data } = await api.get("");
     return data;
   } catch (error) {

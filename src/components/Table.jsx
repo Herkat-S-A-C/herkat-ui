@@ -1,3 +1,4 @@
+// src/components/Table.jsx
 const Table = ({ data, type, onEdit, onDelete }) => {
   const isTipo = ["ProductosTipos", "ServiciosTipos", "MaquinariaTipos"].includes(type);
   const isSociales = type === "sociales";
@@ -25,14 +26,14 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 <th className="px-4 py-2 text-left">Descripción</th>
               </>
             )}
-            {!isTipo && <th className="px-4 py-2 text-left">Imagen</th>}
+            {!isTipo && !isSociales && <th className="px-4 py-2 text-left">Imagen</th>}
             <th className="px-4 py-2 text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td
-              colSpan={isTipo ? 3 : isSociales ? 4 : isBanner ? 3 : 6}
+              colSpan={isTipo ? 3 : isSociales ? 3 : isBanner ? 3 : 6}
               className="px-4 py-6 text-gray-500 text-center italic"
             >
               No hay datos disponibles
@@ -44,6 +45,9 @@ const Table = ({ data, type, onEdit, onDelete }) => {
   );
 
   if (!data || data.length === 0) return renderEmptyTable();
+
+  // 🔹 Ordenar datos por ID de menor a mayor
+  const sortedData = [...data].sort((a, b) => a.id - b.id);
 
   return (
     <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white">
@@ -67,17 +71,14 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 <th className="px-4 py-2 text-left">Descripción</th>
               </>
             )}
-            {!isTipo && <th className="px-4 py-2 text-left">Imagen</th>}
+            {!isTipo && !isSociales && <th className="px-4 py-2 text-left">Imagen</th>}
             <th className="px-4 py-2 text-center">Acciones</th>
           </tr>
         </thead>
 
         <tbody>
-          {data.map((item) => (
-            <tr
-              key={item.id}
-              className="hover:bg-gray-50 transition-colors text-sm"
-            >
+          {sortedData.map((item) => (
+            <tr key={item.id} className="hover:bg-gray-50 transition-colors text-sm">
               <td className="px-4 py-2 border-b">{item.id}</td>
 
               {isTipo && <td className="px-4 py-2 border-b">{item.name}</td>}
@@ -98,16 +99,13 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                   {type === "productos" && (
                     <td className="px-4 py-2 border-b">{item.capacity || "—"}</td>
                   )}
-                  <td
-                    className="px-4 py-2 border-b truncate max-w-xs"
-                    title={item.description}
-                  >
+                  <td className="px-4 py-2 border-b truncate max-w-xs" title={item.description}>
                     {item.description || "—"}
                   </td>
                 </>
               )}
 
-              {!isTipo && (
+              {!isTipo && !isSociales && (
                 <td className="px-4 py-2 border-b">
                   {item.imageUrl || item.image ? (
                     <img
@@ -128,17 +126,18 @@ const Table = ({ data, type, onEdit, onDelete }) => {
               <td className="px-4 py-2 border-b text-center space-x-2">
                 <button
                   onClick={() => onEdit(item)}
-                  className="px-3 py-1 rounded-full text-yellow-700 bg-yellow-100 hover:bg-yellow-200 transform transition-transform duration-200
-                  hover:scale-[1.18]"
+                  className="px-3 py-1 rounded-full text-yellow-700 bg-yellow-100 hover:bg-yellow-200 transform transition-transform duration-200 hover:scale-[1.18]"
                 >
                   Editar
                 </button>
-                <button
-                  onClick={() => onDelete(item.id)}
-                  className="px-3 py-1 rounded-full text-red-700 bg-red-100 hover:bg-red-200 transform transition-transform duration-200 hover:scale-[1.18]"
-                >
-                  Eliminar
-                </button>
+                {!isSociales && (
+                  <button
+                    onClick={() => onDelete(item.id)}
+                    className="px-3 py-1 rounded-full text-red-700 bg-red-100 hover:bg-red-200 transform transition-transform duration-200 hover:scale-[1.18]"
+                  >
+                    Eliminar
+                  </button>
+                )}
               </td>
             </tr>
           ))}

@@ -57,4 +57,10 @@ export const formConfig = {
     { name: "nombre", label: "Nombre del banner", type: "text", required: true },
     { name: "imagen", label: "Imagen", type: "image", required: true },
   ],
+
+  // --------- REDES SOCIALES ---------
+  sociales: [
+    { name: "tipo", label: "Nombre de la red social", type: "text", required: true },
+    { name: "url", label: "URL", type: "url", required: true },
+  ],
 };

@@ -3,10 +3,25 @@ import { useState, useEffect } from "react";
 import { formConfig } from "../constants/formConfig";
 
 // Servicios API
-import { updateSocialMedia } from "../services/socialMediaService";
-import { getAllProductTypes, createProductType, updateProductType } from "../services/typeProductsServices";
-import { getAllMachineTypes, createMachineType, updateMachineType } from "../services/typeMachineryServices";
-import { getAllServiceTypes, createServiceType, updateServiceType } from "../services/typeServicesServices";
+import {
+  getSocialMedia,
+  updateSocialMedia,
+} from "../services/socialMediaService";
+import {
+  getAllProductTypes,
+  createProductType,
+  updateProductType,
+} from "../services/typeProductsServices";
+import {
+  getAllMachineTypes,
+  createMachineType,
+  updateMachineType,
+} from "../services/typeMachineryServices";
+import {
+  getAllServiceTypes,
+  createServiceType,
+  updateServiceType,
+} from "../services/typeServicesServices";
 import { createProduct, updateProduct } from "../services/productsService";
 import { createMachine, updateMachine } from "../services/machineryService";
 import { createService, updateService } from "../services/servicesService";
@@ -23,23 +38,71 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   // Cargar listas dinámicas
   useEffect(() => {
     if (type === "productos") {
-      getAllProductTypes().then(setProductTypes).catch(console.error);
+      getAllProductTypes()
+        .then((data) => {
+          setProductTypes(data);
+          if (item?.typeName) {
+            const match = data.find(
+              (t) => t.name.toLowerCase() === item.typeName.toLowerCase()
+            );
+            if (match) setForm((prev) => ({ ...prev, tipo: match.id }));
+          }
+        })
+        .catch(console.error);
     }
     if (type === "maquinaria") {
-      getAllMachineTypes().then(setMachineTypes).catch(console.error);
+      getAllMachineTypes()
+        .then((data) => {
+          setMachineTypes(data);
+          if (item?.typeName) {
+            const match = data.find(
+              (t) => t.name.toLowerCase() === item.typeName.toLowerCase()
+            );
+            if (match) setForm((prev) => ({ ...prev, tipo: match.id }));
+          }
+        })
+        .catch(console.error);
     }
     if (type === "servicios") {
-      getAllServiceTypes().then(setServiceTypes).catch(console.error);
+      getAllServiceTypes()
+        .then((data) => {
+          setServiceTypes(data);
+          if (item?.typeName) {
+            const match = data.find(
+              (t) => t.name.toLowerCase() === item.typeName.toLowerCase()
+            );
+            if (match) setForm((prev) => ({ ...prev, tipo: match.id }));
+          }
+        })
+        .catch(console.error);
     }
-  }, [type]);
+  }, [type, item]);
 
-  // Prellenar si está en edición
+  // Cargar redes sociales si es modal social
   useEffect(() => {
-    if (item) {
+    if (isSocial && item?.id) {
+      getSocialMedia()
+        .then((data) => {
+          const social = data.find((s) => s.id === item.id);
+          if (social) {
+            setForm({
+              id: social.id,
+              tipo: social.type || "", // 🔹 usamos el "type" (enum)
+              url: social.url || "",
+            });
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isSocial, item]);
+
+  // Prellenar si está en edición (excepto sociales que se cargan arriba)
+  useEffect(() => {
+    if (item && !isSocial) {
       setForm({
         id: item.id || "",
         nombre: item.name || "",
-        tipo: item.typeId || "",
+        tipo: item.typeId || item.tipo || item.name || "",
         capacidad: item.capacity || "",
         descripcion: item.description || "",
         imagen: item.imageUrl || "",
@@ -48,57 +111,54 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         left: item.left || "no",
         url: item.url || "",
       });
-    } else {
-      const newId =
-        ["productos", "maquinaria", "servicios"].includes(type)
-          ? ""
-          : lastId
-          ? String(Number(lastId) + 1)
-          : "1";
+    } else if (!item && !isSocial) {
+      const newId = ["productos", "maquinaria", "servicios"].includes(type)
+        ? ""
+        : lastId
+        ? String(Number(lastId) + 1)
+        : "1";
       setForm({ id: newId });
     }
-  }, [item, lastId, type]);
+  }, [item, lastId, type, isSocial]);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setForm({ ...form, file });
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setForm((prev) => ({ ...prev, imagen: reader.result }));
+      reader.onloadend = () =>
+        setForm((prev) => ({ ...prev, imagen: reader.result }));
       reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async () => {
     try {
-      // 📌 Banner: solo nombre + imagen
       if (isBanner) {
         if (!form.nombre) return alert("Completa el nombre del banner");
-        if (!form.file && !item) return alert("Selecciona una imagen para el banner");
-
+        if (!form.file && !item)
+          return alert("Selecciona una imagen para el banner");
         const formData = new FormData();
         formData.append("name", form.nombre);
         if (form.file) formData.append("image", form.file);
-
         item
           ? await updateBanner(form.id, formData)
           : await createBanner(formData);
-
         onSave();
         return onClose();
       }
 
-      // 📌 Redes sociales
       if (isSocial) {
-        if (!form.url) return alert("La URL es obligatoria");
+        if (!form.url?.trim()) return alert("La URL es obligatoria");
+        // 🔹 Usamos el "tipo" (enum) en lugar del id
         await updateSocialMedia(form.tipo, { url: form.url });
         onSave();
         return onClose();
       }
 
-      // 📌 Tipos de producto
       if (type === "ProductosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
@@ -108,7 +168,6 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         return onClose();
       }
 
-      // 📌 Tipos de servicio
       if (type === "ServiciosTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
@@ -118,7 +177,6 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         return onClose();
       }
 
-      // 📌 Tipos de maquinaria
       if (type === "MaquinariaTipos") {
         if (!form.nombre) return alert("Completa el nombre del tipo");
         item
@@ -128,70 +186,77 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         return onClose();
       }
 
-      // 📌 Productos
       if (type === "productos") {
         if (!form.nombre) return alert("Completa el nombre del producto");
         if (!form.tipo) return alert("Selecciona un tipo de producto");
-
         const formData = new FormData();
-        formData.append("name", form.nombre);
+        if (!item || form.nombre !== item.name) {
+          formData.append("name", form.nombre);
+        }
         formData.append("typeId", form.tipo);
         formData.append("capacity", parseFloat(form.capacidad) || 0);
         formData.append("description", form.descripcion || "");
         if (form.file) formData.append("image", form.file);
-
         item
           ? await updateProduct(form.id, formData)
           : await createProduct(formData);
-
         onSave();
         return onClose();
       }
 
-      // 📌 Maquinaria
       if (type === "maquinaria") {
         if (!form.nombre) return alert("Completa el nombre de la maquinaria");
         if (!form.tipo) return alert("Selecciona un tipo de maquinaria");
-
         const formData = new FormData();
-        formData.append("name", form.nombre);
+        if (!item || form.nombre !== item.name) {
+          formData.append("name", form.nombre);
+        }
         formData.append("typeId", form.tipo);
         formData.append("description", form.descripcion || "");
         if (form.file) formData.append("image", form.file);
-
         item
           ? await updateMachine(form.id, formData)
           : await createMachine(formData);
-
         onSave();
         return onClose();
       }
 
-      // 📌 Servicios
       if (type === "servicios") {
         if (!form.nombre) return alert("Completa el nombre del servicio");
         if (!form.tipo) return alert("Selecciona un tipo de servicio");
-
         const formData = new FormData();
-        formData.append("name", form.nombre);
+        if (!item || form.nombre !== item.name) {
+          formData.append("name", form.nombre);
+        }
         formData.append("typeId", form.tipo);
         formData.append("description", form.descripcion || "");
         if (form.file) formData.append("image", form.file);
-
         item
           ? await updateService(form.id, formData)
           : await createService(formData);
-
         onSave();
         return onClose();
       }
     } catch (error) {
-      console.error("❌ Error al guardar:", error.response?.data || error.message);
+      console.error(
+        "❌ Error al guardar:",
+        error.response?.data || error.message
+      );
       alert("Ocurrió un error al guardar los datos");
     }
   };
 
-  const fields = formConfig[type] || [];
+  const fields = isSocial
+    ? [
+        {
+          name: "tipo",
+          label: "Nombre de la red social",
+          type: "text",
+          readonly: true,
+        },
+        { name: "url", label: "URL", type: "text", required: true },
+      ]
+    : formConfig[type] || [];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -210,6 +275,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
                 value={form[field.name] || ""}
                 onChange={handleChange}
                 placeholder={field.label}
+                readOnly={field.readonly || false}
                 className="border p-2 w-full mb-2"
               />
             );
@@ -270,10 +336,16 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         })}
 
         <div className="flex justify-end gap-2 mt-4">
-          <button onClick={onClose} className="bg-gray-400 text-white px-4 py-2 rounded">
+          <button
+            onClick={onClose}
+            className="bg-gray-400 text-white px-4 py-2 rounded"
+          >
             Cancelar
           </button>
-          <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded">
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
             {item ? "Guardar" : "Agregar"}
           </button>
         </div>
@@ -293,9 +365,20 @@ const UploadImage = ({ form, handleFileChange, inputId }) => (
         if (file) handleFileChange({ target: { files: [file] } });
       }}
     >
-      <p className="text-gray-500">Arrastra una imagen aquí o haz clic para seleccionarla</p>
-      <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id={inputId} />
-      <label htmlFor={inputId} className="bg-blue-500 text-white px-3 py-1 rounded cursor-pointer mt-2 inline-block">
+      <p className="text-gray-500">
+        Arrastra una imagen aquí o haz clic para seleccionarla
+      </p>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+        id={inputId}
+      />
+      <label
+        htmlFor={inputId}
+        className="bg-blue-500 text-white px-3 py-1 rounded cursor-pointer mt-2 inline-block"
+      >
         Seleccionar archivo
       </label>
     </div>

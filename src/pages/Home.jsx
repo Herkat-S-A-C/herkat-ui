@@ -4,51 +4,82 @@ import CardItem from "../components/CardItem";
 import Footer from "../components/Footer";
 import Banner from "../components/Banner";
 import ButtonWhatsApp from "../components/ButtonWhatsApp";
-import { products, services, machinery, banner } from "../constants/dataItems";
 import { useEffect, useState, useRef } from "react";
 import CardService from "../components/CardService";
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
+
+// importacion de servicios
+import { getAllProducts } from "/src/services/productsService.js";
+import { getAllServices } from "/src/services/servicesService.js";
+import { getAllMachines } from "/src/services/machineryService.js";
+import { getAllBanners } from "/src/services/bannerServices.js";
 
 function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  // Estados para API
+  const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
+  const [machinery, setMachinery] = useState([]);
+  const [banners, setBanners] = useState([]);
+
   // refs para los contenedores
   const productosRef = useRef(null);
   const maquinariasRef = useRef(null);
 
-  // ref para almacenar animaciones activas y poder cancelarlas
+  // ref para animaciones
   const scrollAnimRef = useRef(new Map());
 
-  // Autoplay banner: cambia cada 8 segundos
+  // Fetch de datos desde API
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % banner.length);
-    }, 8000);
-    return () => clearInterval(interval);
+    const fetchData = async () => {
+      try {
+        const [prodRes, servRes, machRes, bannRes] = await Promise.all([
+          getAllProducts(),
+          getAllServices(),
+          getAllMachines(),
+          getAllBanners(),
+        ]);
+        setProducts(prodRes);
+        setServices(servRes);
+        setMachinery(machRes);
+        setBanners(bannRes);
+      } catch (error) {
+        console.error("❌ Error cargando datos:", error);
+      }
+    };
+    fetchData();
   }, []);
 
-  // Funciones para avanzar y retroceder el banner
+  // Autoplay banner
+  useEffect(() => {
+    if (banners.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [banners]);
+
+  // Funciones para avanzar/retroceder banners
   const prevBanner = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? banner.length - 1 : prevIndex - 1
+      prevIndex === 0 ? banners.length - 1 : prevIndex - 1
     );
   };
 
   const nextBanner = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === banner.length - 1 ? 0 : prevIndex + 1
+      prevIndex === banners.length - 1 ? 0 : prevIndex + 1
     );
   };
 
-  // easing (suavizado)
+  // easing
   const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-  // animación smooth custom con requestAnimationFrame (cancela animaciones previas)
+  // smooth scroll
   const smoothScrollBy = (container, distance, duration = 500) => {
     if (!container) return;
-
-    // cancelar animación previa de ese container si existe
     const prevAnim = scrollAnimRef.current.get(container);
     if (prevAnim) cancelAnimationFrame(prevAnim);
 
@@ -75,10 +106,8 @@ function Home() {
     scrollAnimRef.current.set(container, id);
   };
 
-  // obtiene el primer elemento hijo válido (tarjeta) y calcula ancho + gap
   const getCardWidth = (container) => {
     if (!container) return 0;
-    // buscar el primer hijo elemento (evitar nodos de texto)
     const firstChild = Array.from(container.children).find(
       (c) => c.nodeType === 1
     );
@@ -94,14 +123,12 @@ function Home() {
     return Math.round(width + gap);
   };
 
-  // helper para resolver ref por id (sigue soportando document.getElementById como fallback)
   const getContainerById = (id) => {
     if (id === "productos") return productosRef.current;
     if (id === "maquinarias") return maquinariasRef.current;
     return document.getElementById(id);
   };
 
-  // Scroll horizontal: usa smoothScrollBy y mueve exactamente 1 tarjeta
   const scrollLeft = (id) => {
     const container = getContainerById(id);
     if (!container) return;
@@ -118,17 +145,6 @@ function Home() {
     smoothScrollBy(container, cardWidth);
   };
 
-  // Filtrar destacados
-  const productosDestacados = products.filter(
-    (item) => item.outstanding === "si"
-  );
-  const maquinariaDestacada = machinery.filter(
-    (item) => item.outstanding === "si"
-  );
-  const serviciosDestacados = services.filter(
-    (item) => item.outstanding === "si"
-  );
-
   // Modal
   const openModal = (item) => setSelectedItem(item);
   const closeModal = () => setSelectedItem(null);
@@ -137,8 +153,9 @@ function Home() {
     <div className="bg-gray-100 overflow-x-hidden">
       <Header />
 
+      {/* Banner con objetos completos */}
       <Banner
-        images={banner}
+        images={banners}
         currentIndex={currentIndex}
         onPrev={prevBanner}
         onNext={nextBanner}
@@ -148,36 +165,45 @@ function Home() {
       {selectedItem && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={closeModal} // si hacen click fuera, cierra
+          onClick={closeModal}
         >
           <div
             className="bg-white rounded-lg max-w-4xl w-full relative shadow-lg p-8"
-            onClick={(e) => e.stopPropagation()} // evita que el click dentro lo cierre
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Botón cerrar */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-600 hover:text-red-500 hover:scale-150 focus:outline-none focus:ring-0"
-              aria-label="Cerrar modal"
+              className="absolute top-4 right-4 text-gray-600 hover:text-red-500 hover:scale-150"
             >
               <FaTimes size={24} />
             </button>
 
-            {/* Contenido en columnas */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Imagen */}
               <div className="flex items-center justify-center">
                 <img
-                  src={selectedItem.image}
-                  alt={selectedItem.title}
+                  src={selectedItem.imageUrl}
+                  alt={selectedItem.name}
                   className="w-full h-full object-cover rounded"
                 />
               </div>
 
-              {/* Texto */}
               <div className="flex flex-col justify-center">
-                <h3 className="text-2xl font-semibold mb-4">{selectedItem.title}</h3>
-                <p className="text-gray-600 text-lg text-justify">{selectedItem.description}</p>
+                <h3 className="text-2xl font-semibold mb-4">
+                  {selectedItem.name}
+                </h3>
+                <p className="text-gray-600 text-lg text-justify">
+                  {selectedItem.description}
+                </p>
+
+                {/* Capacidad (solo si existe y es producto) */}
+                {selectedItem.capacity && (
+                  <p className="mt-4 text-lg font-medium text-blue-800">
+                    Capacidad:{" "}
+                    {selectedItem.capacity >= 1000
+                      ? `${(selectedItem.capacity / 1000).toFixed(1)} L`
+                      : `${selectedItem.capacity} ml`}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -186,52 +212,34 @@ function Home() {
 
       {/* Productos */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-          Productos destacados
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">Productos</h2>
 
-        {/* Botón izquierda */}
         <button
           onClick={() => scrollLeft("productos")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center 
-      z-20 hover:scale-125 transition-transform duration-300 ease-in-out focus:outline-none"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
 
-        {/* Contenedor scrollable con espacio extra a los lados */}
         <div
           id="productos"
           ref={productosRef}
           className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full"
         >
-
-          {productosDestacados.map((item) => (
+          {products.map((item) => (
             <div
               key={item.id}
-              tabIndex={0}
               onClick={() => openModal(item)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") openModal(item);
-              }}
-              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer
-                   transition-transform duration-300 ease-in-out
-                   hover:scale-110 hover:z-50"
+              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-50"
             >
-              <CardItem
-                title={item.title}
-                description={item.description}
-                image={item.image}
-              />
+              <CardItem {...item} />
             </div>
           ))}
         </div>
 
-        {/* Botón derecha */}
         <button
           onClick={() => scrollRight("productos")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center
-      z-20 hover:scale-125 transition-transform duration-300 ease-in-out focus:outline-none"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
         >
           <FaChevronRight className="text-blue-800" />
         </button>
@@ -239,84 +247,57 @@ function Home() {
 
       {/* Servicios */}
       <section className="mt-2 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-          Servicios destacados
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Servicios</h2>
 
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {serviciosDestacados.map((item) => (
+          {services.map((item) => (
             <div
               key={item.id}
-              tabIndex={0}
               onClick={() => openModal(item)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") openModal(item);
-              }}
-              className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+              className="cursor-pointer hover:scale-105 hover:shadow-lg"
             >
-              <CardService
-                title={item.title}
-                description={item.description}
-                image={item.image}
-              />
+              <CardService {...item} />
             </div>
           ))}
         </div>
       </section>
 
-
       {/* Maquinarias */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-          Maquinarias destacadas
+          Maquinarias
         </h2>
 
-        {/* Botón izquierda */}
         <button
           onClick={() => scrollLeft("maquinarias")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center 
-      z-20 hover:scale-125 transition-transform duration-300 ease-in-out focus:outline-none"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
 
-        {/* Contenedor scrollable */}
         <div
           id="maquinarias"
           ref={maquinariasRef}
           className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full"
         >
-          {maquinariaDestacada.map((item) => (
+          {machinery.map((item) => (
             <div
               key={item.id}
-              tabIndex={0}
               onClick={() => openModal(item)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") openModal(item);
-              }}
-              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer
-                   transition-transform duration-300 ease-in-out
-                   hover:scale-110 hover:z-50"
+              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-50"
             >
-              <CardItem
-                title={item.title}
-                description={item.description}
-                image={item.image}
-              />
+              <CardItem {...item} />
             </div>
           ))}
         </div>
 
-        {/* Botón derecha */}
         <button
           onClick={() => scrollRight("maquinarias")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center
-      z-20 hover:scale-125 transition-transform duration-300 ease-in-out focus:outline-none"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
         >
           <FaChevronRight className="text-blue-800" />
         </button>
       </section>
-
 
       {/* Ubicación / Mapa */}
       <section className="mt-2 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
@@ -326,7 +307,7 @@ function Home() {
         <div className="w-full h-[700px] rounded-md overflow-hidden shadow-lg">
           <iframe
             title="Ubicación del local"
-            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3902.4214076270105!2d-76.96286052493942!3d-12.014482988219758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDAwJzUyLjEiUyA3NsKwNTcnMzcuMCJX!5e0!3m2!1ses!2spe!4v1754349773753!5m2!1ses!2spe"
+            src="https://www.google.com/maps/embed?..."
             width="100%"
             height="100%"
             style={{ border: 0 }}
@@ -335,10 +316,6 @@ function Home() {
             referrerPolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
-
-        <br />
-        <br />
-        <br />
       </section>
 
       {/* Visión y Misión */}

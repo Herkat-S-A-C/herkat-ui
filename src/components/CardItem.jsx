@@ -1,5 +1,5 @@
-/* -------------------- CardItem (sin transform/rotation, solo sombra y fondo) -------------------- */
-function CardItem({ title, description, image }) {
+/* -------------------- CardItem (adaptado a la API) -------------------- */
+function CardItem({ name, description, imageUrl }) {
   return (
     <div
       className="relative bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-80 cursor-pointer
@@ -7,13 +7,13 @@ function CardItem({ title, description, image }) {
       tabIndex={-1}
     >
       <img
-        src={image}
-        alt={title}
+        src={imageUrl}
+        alt={name}
         className="h-48 w-full object-contain bg-white"
       />
       <div className="p-4 flex flex-col justify-between flex-1">
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 h-[3.5rem]">
-          {title}
+          {name}
         </h3>
         <p className="text-sm text-gray-600 mt-2 line-clamp-4 h-[5rem]">
           {description}
