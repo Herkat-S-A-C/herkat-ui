@@ -1,6 +1,7 @@
 const Table = ({ data, type, onEdit, onDelete }) => {
   const isTipo = ["ProductosTipos", "ServiciosTipos", "MaquinariaTipos"].includes(type);
   const isSociales = type === "sociales";
+  const isBanner = type === "banner";
 
   const renderEmptyTable = () => (
     <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white">
@@ -15,21 +16,23 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 <th className="px-4 py-2 text-left">URL</th>
               </>
             )}
-            {!isTipo && !isSociales && type !== "banner" && (
+            {isBanner && <th className="px-4 py-2 text-left">Nombre</th>}
+            {!isTipo && !isSociales && !isBanner && (
               <>
                 <th className="px-4 py-2 text-left">Nombre</th>
                 <th className="px-4 py-2 text-left">Tipo</th>
+                {type === "productos" && <th className="px-4 py-2 text-left">Capacidad</th>}
                 <th className="px-4 py-2 text-left">Descripción</th>
               </>
             )}
-            {!isTipo && !isSociales && <th className="px-4 py-2 text-left">Imagen</th>}
+            {!isTipo && <th className="px-4 py-2 text-left">Imagen</th>}
             <th className="px-4 py-2 text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td
-              colSpan={isTipo ? 3 : isSociales ? 3 : 5}
+              colSpan={isTipo ? 3 : isSociales ? 4 : isBanner ? 3 : 6}
               className="px-4 py-6 text-gray-500 text-center italic"
             >
               No hay datos disponibles
@@ -55,14 +58,16 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 <th className="px-4 py-2 text-left">URL</th>
               </>
             )}
-            {!isTipo && !isSociales && type !== "banner" && (
+            {isBanner && <th className="px-4 py-2 text-left">Nombre</th>}
+            {!isTipo && !isSociales && !isBanner && (
               <>
                 <th className="px-4 py-2 text-left">Nombre</th>
                 <th className="px-4 py-2 text-left">Tipo</th>
+                {type === "productos" && <th className="px-4 py-2 text-left">Capacidad</th>}
                 <th className="px-4 py-2 text-left">Descripción</th>
               </>
             )}
-            {!isTipo && !isSociales && <th className="px-4 py-2 text-left">Imagen</th>}
+            {!isTipo && <th className="px-4 py-2 text-left">Imagen</th>}
             <th className="px-4 py-2 text-center">Acciones</th>
           </tr>
         </thead>
@@ -84,10 +89,15 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 </>
               )}
 
-              {!isTipo && !isSociales && type !== "banner" && (
+              {isBanner && <td className="px-4 py-2 border-b">{item.name}</td>}
+
+              {!isTipo && !isSociales && !isBanner && (
                 <>
                   <td className="px-4 py-2 border-b">{item.name}</td>
-                  <td className="px-4 py-2 border-b">{item.type}</td>
+                  <td className="px-4 py-2 border-b">{item.typeName || item.type || "—"}</td>
+                  {type === "productos" && (
+                    <td className="px-4 py-2 border-b">{item.capacity || "—"}</td>
+                  )}
                   <td
                     className="px-4 py-2 border-b truncate max-w-xs"
                     title={item.description}
@@ -97,14 +107,14 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 </>
               )}
 
-              {!isTipo && !isSociales && (
+              {!isTipo && (
                 <td className="px-4 py-2 border-b">
-                  {item.image ? (
+                  {item.imageUrl || item.image ? (
                     <img
-                      src={item.image}
+                      src={item.imageUrl || item.image}
                       alt={item.name || `Elemento ${item.id}`}
                       className={
-                        type === "banner"
+                        isBanner
                           ? "w-48 h-24 object-cover rounded-md shadow-sm"
                           : "w-16 h-16 object-cover rounded-md shadow-sm"
                       }
