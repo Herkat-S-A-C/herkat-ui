@@ -99,20 +99,17 @@ function Catalog() {
     const term = searchTerm.toLowerCase();
     return (
       item.name?.toLowerCase().includes(term) ||
-      item.category?.toLowerCase().includes(term)
+      item.typeName?.toLowerCase().includes(term) // ✅ unificado
     );
   });
 
-  // Agrupar por categoría (para productos/maquinaria)
-  const groupedItems =
-    type !== "servicios"
-      ? filteredItems.reduce((acc, item) => {
-          const cat = item.category || "Otros";
-          acc[cat] = acc[cat] || [];
-          acc[cat].push(item);
-          return acc;
-        }, {})
-      : {};
+  // Agrupar según el tipoName de cada entidad
+  const groupedItems = filteredItems.reduce((acc, item) => {
+    const groupKey = item.typeName || "Otros"; // ✅ unificado
+    acc[groupKey] = acc[groupKey] || [];
+    acc[groupKey].push(item);
+    return acc;
+  }, {});
 
   // ---- Scroll carrusel ----
   const scrollRefs = useRef({});
@@ -127,10 +124,7 @@ function Catalog() {
     if (prevAnim) cancelAnimationFrame(prevAnim);
 
     const start = container.scrollLeft;
-    const maxLeft = Math.max(
-      0,
-      container.scrollWidth - container.clientWidth
-    );
+    const maxLeft = Math.max(0, container.scrollWidth - container.clientWidth);
     const end = Math.max(0, Math.min(start + distance, maxLeft));
     const startTime = performance.now();
 
@@ -192,94 +186,76 @@ function Catalog() {
       <div className="min-h-screen bg-gray-100">
         {/* Título + barra de búsqueda */}
         <div className="px-4 md:px-6 pt-8 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold capitalize">
-            {type}
-          </h1>
+          <h1 className="text-2xl md:text-3xl font-bold capitalize">{type}</h1>
 
-          {type !== "servicios" && (
-            <input
-              type="text"
-              placeholder="Buscar por nombre o categoría..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition
-              duration-200"
-            />
-          )}
+          <input
+            type="text"
+            placeholder="Buscar por nombre o tipo..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+          />
         </div>
 
         {items.length > 0 ? (
-          type === "servicios" ? (
-            // 🔹 Servicios igual que en Home.jsx
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] overflow-visible pb-20">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="cursor-pointer"
-                  onClick={() => setSelectedItem(item)}
-                >
-                  <CardService
-                    name={item.name}
-                    description={item.description}
-                    imageUrl={item.imageUrl || item.image || "/placeholder-service.png"}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              {Object.entries(groupedItems).map(([subtipo, itemsSubgrupo]) => (
-                <section className="mb-12 bg-gray-100" key={subtipo}>
-                  <h2 className="px-[60px] text-lg md:text-xl font-semibold text-gray-800 mb-3 capitalize">
-                    {subtipo}
-                  </h2>
+          <>
+            {Object.entries(groupedItems).map(([subtipo, itemsSubgrupo]) => (
+              <section className="mb-12 bg-gray-100" key={subtipo}>
+                <h2 className="px-[60px] text-lg md:text-xl font-semibold text-gray-800 mb-3 capitalize">
+                  {subtipo}
+                </h2>
 
-                  <div className="relative px-[60px]">
-                    {/* Botón izquierda */}
-                    <button
-                      onClick={() => scrollLeft(subtipo)}
-                      className="hidden md:flex absolute left-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
-                    >
-                      <FaChevronLeft className="text-blue-800" />
-                    </button>
+                <div className="relative px-[60px]">
+                  {/* Botón izquierda */}
+                  <button
+                    onClick={() => scrollLeft(subtipo)}
+                    className="hidden md:flex absolute left-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
+                  >
+                    <FaChevronLeft className="text-blue-800" />
+                  </button>
 
-                    {/* Carrusel */}
-                    <div
-                      ref={(el) => (scrollRefs.current[subtipo] = el)}
-                      className="pt-4 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full pl-[20px] pr-[20px]"
-                    >
-                      {itemsSubgrupo.map((item) => (
-                        <div
-                          key={item.id}
-                          className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:z-10"
-                          onClick={() => setSelectedItem(item)}
-                        >
+                  {/* Carrusel */}
+                  <div
+                    ref={(el) => (scrollRefs.current[subtipo] = el)}
+                    className="pt-4 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full pl-[20px] pr-[20px]"
+                  >
+                    {itemsSubgrupo.map((item) => (
+                      <div
+                        key={item.id}
+                        className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:z-10"
+                        onClick={() => setSelectedItem(item)}
+                      >
+                        {type === "servicios" ? (
+                          <CardService
+                            name={item.name}
+                            description={item.description}
+                            imageUrl={item.imageUrl || item.image || "/placeholder-service.png"}
+                          />
+                        ) : (
                           <CardItem
                             name={item.name}
                             description={item.description}
                             imageUrl={item.imageUrl || item.image || "/placeholder.png"}
                             capacity={item.capacity}
                           />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Botón derecha */}
-                    <button
-                      onClick={() => scrollRight(subtipo)}
-                      className="hidden md:flex absolute right-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
-                    >
-                      <FaChevronRight className="text-blue-800" />
-                    </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                </section>
-              ))}
-            </>
-          )
+
+                  {/* Botón derecha */}
+                  <button
+                    onClick={() => scrollRight(subtipo)}
+                    className="hidden md:flex absolute right-[20px] top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border hover:scale-125 transition-transform duration-300 ease-in-out w-10 h-10 items-center justify-center z-20"
+                  >
+                    <FaChevronRight className="text-blue-800" />
+                  </button>
+                </div>
+              </section>
+            ))}
+          </>
         ) : (
-          <p className="text-gray-500 px-4">
-            No hay elementos en esta categoría.
-          </p>
+          <p className="text-gray-500 px-4">No hay elementos en esta categoría.</p>
         )}
       </div>
 
