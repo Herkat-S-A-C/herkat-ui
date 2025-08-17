@@ -202,7 +202,8 @@ function Catalog() {
               placeholder="Buscar por nombre o categoría..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition
+              duration-200"
             />
           )}
         </div>
@@ -214,7 +215,7 @@ function Catalog() {
               {filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="cursor-pointer hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
+                  className="cursor-pointer"
                   onClick={() => setSelectedItem(item)}
                 >
                   <CardService
@@ -250,7 +251,7 @@ function Catalog() {
                       {itemsSubgrupo.map((item) => (
                         <div
                           key={item.id}
-                          className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110 hover:z-10"
+                          className="min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:z-10"
                           onClick={() => setSelectedItem(item)}
                         >
                           <CardItem

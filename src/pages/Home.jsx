@@ -205,8 +205,8 @@ function Home() {
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">Productos</h2>
         <button
           onClick={() => scrollLeft("productos")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20
-          hover:scale-125"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border 
+               w-10 h-10 items-center justify-center z-20 transition-transform duration-300 ease-in-out hover:scale-110"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
@@ -221,7 +221,7 @@ function Home() {
               <div
                 key={item.id}
                 onClick={() => openModal(item)}
-                className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-20"
+                className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer"
               >
                 <CardItem {...item} />
               </div>
@@ -229,7 +229,8 @@ function Home() {
         </div>
         <button
           onClick={() => scrollRight("productos")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border 
+               w-10 h-10 items-center justify-center z-20 transition-transform duration-300 ease-in-out hover:scale-110"
         >
           <FaChevronRight className="text-blue-800" />
         </button>
@@ -245,7 +246,7 @@ function Home() {
               <div
                 key={item.id}
                 onClick={() => openModal(item)}
-                className="cursor-pointer hover:scale-105 hover:shadow-lg"
+                className="cursor-pointer"
               >
                 <CardService {...item} />
               </div>
@@ -255,12 +256,11 @@ function Home() {
 
       {/* Maquinarias */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-          Maquinarias
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">Maquinarias</h2>
         <button
           onClick={() => scrollLeft("maquinarias")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border 
+               w-10 h-10 items-center justify-center z-20 transition-transform duration-300 ease-in-out hover:scale-110"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
@@ -275,7 +275,7 @@ function Home() {
               <div
                 key={item.id}
                 onClick={() => openModal(item)}
-                className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-50"
+                className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer"
               >
                 <CardItem {...item} />
               </div>
@@ -283,11 +283,13 @@ function Home() {
         </div>
         <button
           onClick={() => scrollRight("maquinarias")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border 
+               w-10 h-10 items-center justify-center z-20 transition-transform duration-300 ease-in-out hover:scale-110"
         >
           <FaChevronRight className="text-blue-800" />
         </button>
       </section>
+
 
       {/* Ubicación */}
       <section className="mt-2 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
