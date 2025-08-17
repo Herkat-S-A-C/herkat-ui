@@ -205,7 +205,8 @@ function Home() {
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">Productos</h2>
         <button
           onClick={() => scrollLeft("productos")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20
+          hover:scale-125"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
@@ -308,7 +309,7 @@ function Home() {
       </section>
 
       {/* Visión y Misión */}
-      <section className="mt-12 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] pb-28">
+      <section className="mt-20 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px] pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto text-gray-700">
           <div>
             <h3 className="text-xl font-semibold mb-2 text-blue-800">Visión</h3>
