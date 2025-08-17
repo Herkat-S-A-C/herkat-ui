@@ -123,14 +123,9 @@ function Home() {
     return Math.round(width + gap);
   };
 
-  const getContainerById = (id) => {
-    if (id === "productos") return productosRef.current;
-    if (id === "maquinarias") return maquinariasRef.current;
-    return document.getElementById(id);
-  };
-
   const scrollLeft = (id) => {
-    const container = getContainerById(id);
+    const container =
+      id === "productos" ? productosRef.current : maquinariasRef.current;
     if (!container) return;
     const cardWidth = getCardWidth(container);
     if (!cardWidth) return;
@@ -138,7 +133,8 @@ function Home() {
   };
 
   const scrollRight = (id) => {
-    const container = getContainerById(id);
+    const container =
+      id === "productos" ? productosRef.current : maquinariasRef.current;
     if (!container) return;
     const cardWidth = getCardWidth(container);
     if (!cardWidth) return;
@@ -152,8 +148,6 @@ function Home() {
   return (
     <div className="bg-gray-100 overflow-x-hidden">
       <Header />
-
-      {/* Banner con objetos completos */}
       <Banner
         images={banners}
         currentIndex={currentIndex}
@@ -177,7 +171,6 @@ function Home() {
             >
               <FaTimes size={24} />
             </button>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-center justify-center">
                 <img
@@ -186,7 +179,6 @@ function Home() {
                   className="w-full h-full object-cover rounded"
                 />
               </div>
-
               <div className="flex flex-col justify-center">
                 <h3 className="text-2xl font-semibold mb-4">
                   {selectedItem.name}
@@ -194,8 +186,6 @@ function Home() {
                 <p className="text-gray-600 text-lg text-justify">
                   {selectedItem.description}
                 </p>
-
-                {/* Capacidad (solo si existe y es producto) */}
                 {selectedItem.capacity && (
                   <p className="mt-4 text-lg font-medium text-blue-800">
                     Capacidad:{" "}
@@ -213,30 +203,29 @@ function Home() {
       {/* Productos */}
       <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] relative bg-gray-100 pb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">Productos</h2>
-
         <button
           onClick={() => scrollLeft("productos")}
           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
-
         <div
           id="productos"
           ref={productosRef}
           className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full"
         >
-          {products.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => openModal(item)}
-              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-20"
-            >
-              <CardItem {...item} />
-            </div>
-          ))}
+          {products
+            .filter((item) => item.isFeatured) // ✅ Solo destacados
+            .map((item) => (
+              <div
+                key={item.id}
+                onClick={() => openModal(item)}
+                className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-20"
+              >
+                <CardItem {...item} />
+              </div>
+            ))}
         </div>
-
         <button
           onClick={() => scrollRight("productos")}
           className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
@@ -248,17 +237,18 @@ function Home() {
       {/* Servicios */}
       <section className="mt-2 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Servicios</h2>
-
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => openModal(item)}
-              className="cursor-pointer hover:scale-105 hover:shadow-lg"
-            >
-              <CardService {...item} />
-            </div>
-          ))}
+          {services
+            .filter((item) => item.isFeatured) // ✅ Solo destacados
+            .map((item) => (
+              <div
+                key={item.id}
+                onClick={() => openModal(item)}
+                className="cursor-pointer hover:scale-105 hover:shadow-lg"
+              >
+                <CardService {...item} />
+              </div>
+            ))}
         </div>
       </section>
 
@@ -267,30 +257,29 @@ function Home() {
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">
           Maquinarias
         </h2>
-
         <button
           onClick={() => scrollLeft("maquinarias")}
           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
         >
           <FaChevronLeft className="text-blue-800" />
         </button>
-
         <div
           id="maquinarias"
           ref={maquinariasRef}
           className="pt-6 px-6 -mx-6 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full"
         >
-          {machinery.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => openModal(item)}
-              className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-50"
-            >
-              <CardItem {...item} />
-            </div>
-          ))}
+          {machinery
+            .filter((item) => item.isFeatured) // ✅ Solo destacados
+            .map((item) => (
+              <div
+                key={item.id}
+                onClick={() => openModal(item)}
+                className="relative min-w-[240px] max-w-[240px] flex-shrink-0 h-[370px] cursor-pointer hover:scale-110 hover:z-50"
+              >
+                <CardItem {...item} />
+              </div>
+            ))}
         </div>
-
         <button
           onClick={() => scrollRight("maquinarias")}
           className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-md border w-10 h-10 items-center justify-center z-20 hover:scale-125"
@@ -299,7 +288,7 @@ function Home() {
         </button>
       </section>
 
-      {/* Ubicación / Mapa */}
+      {/* Ubicación */}
       <section className="mt-2 px-4 sm:px-6 md:px-12 lg:px-20 xl:px-[100px]">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           ¿Dónde estamos ubicados?
@@ -307,7 +296,7 @@ function Home() {
         <div className="w-full h-[700px] rounded-md overflow-hidden shadow-lg">
           <iframe
             title="Ubicación del local"
-            src="https://www.google.com/maps/embed?..."
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3902.4214076270105!2d-76.96286052493942!3d-12.014482988219758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDAwJzUyLjEiUyA3NsKwNTcnMzcuMCJX!5e0!3m2!1ses!2spe!4v1755388138617!5m2!1ses!2spe"
             width="100%"
             height="100%"
             style={{ border: 0 }}

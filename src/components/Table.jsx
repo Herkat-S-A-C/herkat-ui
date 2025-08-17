@@ -3,6 +3,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
   const isTipo = ["ProductosTipos", "ServiciosTipos", "MaquinariaTipos"].includes(type);
   const isSociales = type === "sociales";
   const isBanner = type === "banner";
+  const isDestacadoType = ["productos", "servicios", "maquinaria"].includes(type);
 
   const renderEmptyTable = () => (
     <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white">
@@ -24,6 +25,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 <th className="px-4 py-2 text-left">Tipo</th>
                 {type === "productos" && <th className="px-4 py-2 text-left">Capacidad</th>}
                 <th className="px-4 py-2 text-left">Descripción</th>
+                {isDestacadoType && <th className="px-4 py-2 text-left">Destacado</th>}
               </>
             )}
             {!isTipo && !isSociales && <th className="px-4 py-2 text-left">Imagen</th>}
@@ -33,7 +35,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
         <tbody>
           <tr>
             <td
-              colSpan={isTipo ? 3 : isSociales ? 3 : isBanner ? 3 : 6}
+              colSpan={isTipo ? 3 : isSociales ? 3 : isBanner ? 3 : isDestacadoType ? 7 : 6}
               className="px-4 py-6 text-gray-500 text-center italic"
             >
               No hay datos disponibles
@@ -69,6 +71,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                 <th className="px-4 py-2 text-left">Tipo</th>
                 {type === "productos" && <th className="px-4 py-2 text-left">Capacidad</th>}
                 <th className="px-4 py-2 text-left">Descripción</th>
+                {isDestacadoType && <th className="px-4 py-2 text-left">Destacado</th>}
               </>
             )}
             {!isTipo && !isSociales && <th className="px-4 py-2 text-left">Imagen</th>}
@@ -102,6 +105,11 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                   <td className="px-4 py-2 border-b truncate max-w-xs" title={item.description}>
                     {item.description || "—"}
                   </td>
+                  {isDestacadoType && (
+                    <td className="px-4 py-2 border-b text-center">
+                      {item.isFeatured ? "Sí" : "No"}
+                    </td>
+                  )}
                 </>
               )}
 

@@ -52,7 +52,7 @@ const AdminPage = () => {
     []
   );
 
-  const [selected, setSelected] = useState("productos");
+  const [selected, setSelected] = useState("banner");
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
