@@ -1,8 +1,8 @@
 function CardService({ name, description, imageUrl }) {
   return (
     <div
-      className="relative bg-white rounded-xl shadow-md overflow-hidden flex flex-col cursor-pointer
-                 transition-shadow duration-300 ease-in-out hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:bg-gray-50"
+      className="relative bg-white rounded-xl shadow-md overflow-hidden flex flex-col cursor-pointer transform transition-all duration-300 ease-out
+      hover:scale-105 hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:bg-gray-50"
       tabIndex={-1}
     >
       {/* Imagen del servicio */}
@@ -26,6 +26,5 @@ function CardService({ name, description, imageUrl }) {
     </div>
   );
 }
-
 
 export default CardService;
