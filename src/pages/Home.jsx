@@ -237,7 +237,7 @@ function Home() {
       </section>
 
       {/* Servicios */}
-      <section className="mt-2 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
+      <section className="mt-10 px-8 sm:px-12 md:px-16 lg:px-20 xl:px-[100px] bg-gray-100 pb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Servicios</h2>
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {services
