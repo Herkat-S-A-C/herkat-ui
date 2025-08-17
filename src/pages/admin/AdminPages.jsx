@@ -2,8 +2,6 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Sidebar from "/src/components/Sidebar";
 import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
-import HomePreview from "/src/components/HomePreview";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // Servicios
 import { getSocialMedia } from "/src/services/socialMediaService.js";
@@ -38,7 +36,6 @@ const AdminPage = () => {
     MaquinariaTipos: "Tipos de maquinaria",
   };
 
-  // Funciones de eliminación mapeadas
   const deleteMap = useMemo(
     () => ({
       ProductosTipos: deleteProductType,
@@ -56,7 +53,6 @@ const AdminPage = () => {
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [previewVisible, setPreviewVisible] = useState(false);
 
   const serviceMap = useMemo(
     () => ({
@@ -90,8 +86,8 @@ const AdminPage = () => {
     async (id) => {
       try {
         if (deleteMap[selected]) {
-          await deleteMap[selected](id); // eliminar en backend
-          await fetchData(selected);     // recargar lista
+          await deleteMap[selected](id);
+          await fetchData(selected);
         } else {
           console.warn(`No hay función de eliminación para ${selected}`);
         }
@@ -102,7 +98,6 @@ const AdminPage = () => {
     [selected, deleteMap, fetchData]
   );
 
-  // Cargar datos iniciales y tipos
   useEffect(() => {
     fetchData(selected);
     fetchData("ProductosTipos");
@@ -110,7 +105,6 @@ const AdminPage = () => {
     fetchData("MaquinariaTipos");
   }, [selected, fetchData]);
 
-  // Mapea nombre de tipo
   const getDataWithTypeNames = () => {
     let items = Array.isArray(data[selected]) ? [...data[selected]] : [];
 
@@ -138,7 +132,6 @@ const AdminPage = () => {
     return items;
   };
 
-  // Filtrar por búsqueda
   const filteredData = getDataWithTypeNames().filter((item) => {
     const nameKey = item.title || item.nombre || item.name || "";
     const typeKey = item.tipoNombre || "";
@@ -200,29 +193,6 @@ const AdminPage = () => {
           }}
           onDelete={handleDelete}
         />
-
-        <button
-          onClick={() => setPreviewVisible(!previewVisible)}
-          className="fixed bottom-5 right-5 z-50 bg-gradient-to-br from-blue-500 to-blue-700 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:ring-2 hover:ring-indigo-400 transform transition-transform duration-300 hover:scale-[1.05] flex items-center gap-2"
-        >
-          {previewVisible ? <FaEyeSlash /> : <FaEye />}
-        </button>
-
-        {previewVisible && (
-          <div className="fixed bottom-20 right-5 w-[26rem] h-[28rem] bg-white border border-gray-200 shadow-2xl rounded-3xl overflow-hidden z-40">
-            <div className="bg-gray-100 px-4 py-2 border-b text-sm font-semibold text-gray-700">
-              Vista previa
-            </div>
-            <div className="w-full h-full overflow-auto p-4">
-              <HomePreview
-                banner={data.banner}
-                productos={data.productos}
-                servicios={data.servicios}
-                maquinaria={data.maquinaria}
-              />
-            </div>
-          </div>
-        )}
 
         {modalOpen && (
           <ModalForm
