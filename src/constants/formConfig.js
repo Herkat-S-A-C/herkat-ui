@@ -13,7 +13,7 @@ export const formConfig = {
     { name: "capacidad", label: "Capacidad", type: "number" },
     { name: "descripcion", label: "Descripción", type: "textarea" },
     { name: "imagen", label: "Imagen", type: "image" },
-    { name: "isFeatured", label: "Destacado", type: "switch" }, // ✅ corregido
+    { name: "isFeatured", label: "Destacado", type: "switch" },
   ],
 
   maquinaria: [
@@ -27,7 +27,7 @@ export const formConfig = {
     },
     { name: "descripcion", label: "Descripción", type: "textarea" },
     { name: "imagen", label: "Imagen", type: "image" },
-    { name: "isFeatured", label: "Destacado", type: "switch" }, // ✅
+    { name: "isFeatured", label: "Destacado", type: "switch" },
   ],
 
   servicios: [
@@ -41,6 +41,12 @@ export const formConfig = {
     },
     { name: "descripcion", label: "Descripción", type: "textarea" },
     { name: "imagen", label: "Imagen", type: "image" },
-    { name: "isFeatured", label: "Destacado", type: "switch" }, // ✅
+    { name: "isFeatured", label: "Destacado", type: "switch" },
+  ],
+
+  // --------- BANNERS ---------
+  banner: [
+    { name: "nombre", label: "Nombre del banner", type: "text", required: true },
+    { name: "imagen", label: "Imagen", type: "image", required: true },
   ],
 };
