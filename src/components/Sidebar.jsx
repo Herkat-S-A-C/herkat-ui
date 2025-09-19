@@ -16,6 +16,7 @@ const Sidebar = ({ selected, setSelected }) => {
     { key: "ProductosTipos", label: "Tipos de Productos", icon: "category" },
     { key: "ServiciosTipos", label: "Tipos de Servicio", icon: "design_services" },
     { key: "MaquinariaTipos", label: "Tipos de Maquinaria", icon: "construction" },
+    { key: "inventario", label: "Inventario", icon: "inventory_2" },
     { key: "sociales", label: "Sociales", icon: "share" }
   ];
 
