@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
+=======
 import { Motion } from "framer-motion";
 import { formConfig } from "../constants/formConfig";
 import FormFields from "./FormFields";
 
-// Servicios API (mismas rutas que tenías, ajustadas un nivel más arriba)
+// Servicios API
 import {
   getSocialMedia,
   updateSocialMedia,
@@ -38,7 +41,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   const [machineTypes, setMachineTypes] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
 
-  // === Cargar listas de tipos según sección + mapear typeName->id en edición ===
+  // === Cargar listas de tipos según sección ===
   useEffect(() => {
     const mapTypeNameIfNeeded = (data) => {
       if (item?.typeName) {
@@ -75,7 +78,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     }
   }, [type, item]);
 
-  // === Si es social, cargar datos desde servicio y rellenar ===
+  // === Si es social, cargar datos desde servicio ===
   useEffect(() => {
     if (isSocial && item?.id) {
       getSocialMedia()
@@ -84,7 +87,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
           if (social) {
             setForm({
               id: social.id,
-              tipo: social.type || "", // enum/type string
+              tipo: social.type || "",
               url: social.url || "",
             });
           }
@@ -93,7 +96,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     }
   }, [isSocial, item]);
 
-  // === Prellenado general (excepto sociales) ===
+  // === Prellenado general ===
   useEffect(() => {
     if (item && !isSocial) {
       setForm({
@@ -101,6 +104,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         nombre: item.name || "",
         tipo: item.typeId || item.tipo || "",
         capacidad: item.capacity || "",
+        stock: item.stock || "", // 👈 stock agregado
         descripcion: item.description || "",
         imagen: item.imageUrl || "",
         file: null,
@@ -121,7 +125,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         : lastId
           ? String(Number(lastId) + 1)
           : "1";
-      setForm({ id: newId, destacado: false, isFeatured: false });
+      setForm({ id: newId, destacado: false, isFeatured: false, stock: "" }); // 👈 inicializar stock
     }
   }, [item, lastId, type, isSocial]);
 
@@ -140,7 +144,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     }
   };
 
-  // === Guardado usando create*/update* ===
+  // === Guardado ===
   const handleSubmit = async () => {
     try {
       // BANNER
@@ -169,7 +173,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         return onClose();
       }
 
-      // TIPOS: Productos / Servicios / Maquinaria
+      // TIPOS
       if (type === "ProductosTipos") {
         if (!form.nombre?.trim()) return alert("Completa el nombre del tipo");
         if (item) {
@@ -212,6 +216,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         if (!item || form.nombre !== item.name) formData.append("name", form.nombre);
         formData.append("typeId", form.tipo);
         formData.append("capacity", parseFloat(form.capacidad) || 0);
+        formData.append("stock", parseInt(form.stock) || 0); // 👈 stock agregado
         formData.append("description", form.descripcion || "");
         formData.append("isFeatured", form.isFeatured ? "true" : "false");
         if (form.file) formData.append("image", form.file);
@@ -272,7 +277,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     }
   };
 
-  // === Campos dinámicos (idéntico a tu componente original) ===
+  // === Campos dinámicos ===
   const normalizedType = type.charAt(0).toUpperCase() + type.slice(1);
 
   const typeLabels = {
@@ -281,7 +286,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     MaquinariaTipos: "Nombre del tipo de maquinaria",
   };
 
-  const fields = isSocial
+  let fields = isSocial
     ? [
         { name: "tipo", label: "Nombre de la red social", type: "text", readonly: true },
         { name: "url", label: "URL", type: "text", required: true },
@@ -289,6 +294,14 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     : isTypeForm
       ? [{ name: "nombre", label: typeLabels[type], type: "text", required: true }]
       : (formConfig[type] || formConfig[normalizedType] || []);
+
+  // 👉 Agregar el campo stock solo en productos
+  if (type === "productos") {
+    fields = [
+      ...fields,
+      { name: "stock", label: "Cantidad en stock", type: "number", required: true },
+    ];
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">

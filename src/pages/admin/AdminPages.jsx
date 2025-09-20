@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Sidebar from "/src/components/Sidebar";
 import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
+import InventoryChart from "/src/components/InventoryChart";
 
 // Servicios
 import { getSocialMedia } from "/src/services/socialMediaService.js";
@@ -34,6 +35,7 @@ const AdminPage = () => {
     ProductosTipos: "Tipos de productos",
     ServiciosTipos: "Tipos de servicios",
     MaquinariaTipos: "Tipos de maquinaria",
+    inventario: "Inventario", // 🔹 nueva opción
   };
 
   const deleteMap = useMemo(
@@ -143,6 +145,14 @@ const AdminPage = () => {
     );
   });
 
+  // 🔹 Data simulada para Inventario
+  const mockInventoryData = [
+    { nombre: "Producto A", stock: 50 },
+    { nombre: "Producto B", stock: 30 },
+    { nombre: "Producto C", stock: 70 },
+    { nombre: "Producto D", stock: 15 },
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar selected={selected} setSelected={setSelected} />
@@ -153,8 +163,9 @@ const AdminPage = () => {
             {titleMap[selected] || selected}
           </h1>
 
-          <div className="flex gap-4 items-center">
-            {selected !== "sociales" && (
+          {/* 🔹 No mostrar buscador ni botón en Inventario */}
+          {selected !== "sociales" && selected !== "inventario" && (
+            <div className="flex gap-4 items-center">
               <div className="relative group transition-all duration-500 ease-out">
                 <span className="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   search
@@ -168,9 +179,7 @@ const AdminPage = () => {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-            )}
 
-            {selected !== "sociales" && (
               <button
                 className="bg-blue-500 text-white font-bold px-8 py-3 rounded-xl shadow-md transform transition-all duration-200 hover:scale-[1.15] hover:shadow-lg"
                 onClick={() => {
@@ -180,21 +189,29 @@ const AdminPage = () => {
               >
                 Registrar
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        <Table
-          data={filteredData}
-          type={selected}
-          onEdit={(item) => {
-            setEditItem(item);
-            setModalOpen(true);
-          }}
-          onDelete={handleDelete}
-        />
+        {/* 🔹 Mostrar tabla excepto en Inventario */}
+        {selected !== "inventario" && (
+          <Table
+            data={filteredData}
+            type={selected}
+            onEdit={(item) => {
+              setEditItem(item);
+              setModalOpen(true);
+            }}
+            onDelete={handleDelete}
+          />
+        )}
 
-        {modalOpen && (
+        {/* 🔹 Mostrar gráfico en Inventario */}
+        {selected === "inventario" && (
+          <InventoryChart productos={mockInventoryData} />
+        )}
+
+        {modalOpen && selected !== "inventario" && (
           <ModalForm
             type={selected}
             onClose={() => setModalOpen(false)}
