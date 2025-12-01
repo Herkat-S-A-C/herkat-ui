@@ -43,7 +43,7 @@ const AdminPage = () => {
     ProductosTipos: "Tipos de productos",
     ServiciosTipos: "Tipos de servicios",
     MaquinariaTipos: "Tipos de maquinaria",
-    inventario: "Inventario General", // 🔹 Título inventario
+    inventario: "Inventario", // 🔹 nueva opción
   };
 
   const deleteMap = useMemo(
