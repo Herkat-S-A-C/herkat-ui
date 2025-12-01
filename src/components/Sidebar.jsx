@@ -13,17 +13,17 @@ const Sidebar = ({ selected, setSelected }) => {
     { key: "productos", label: "Productos", icon: "shopping_bag" },
     { key: "servicios", label: "Servicios", icon: "build" },
     { key: "maquinaria", label: "Maquinaria", icon: "precision_manufacturing" },
-    { key: "clientes", label: "Clientes", icon: "group" }, // 🔹 Nuevo apartado
+    { key: "clientes", label: "Clientes", icon: "group" },
     { key: "ProductosTipos", label: "Tipos de Productos", icon: "category" },
     { key: "ServiciosTipos", label: "Tipos de Servicio", icon: "design_services" },
     { key: "MaquinariaTipos", label: "Tipos de Maquinaria", icon: "construction" },
-    { key: "inventario", label: "Inventario", icon: "inventory_2" }, // 🔹 Nuevo apartado
+    { key: "inventario", label: "Inventario", icon: "inventory_2" },
     { key: "sociales", label: "Sociales", icon: "share" }
   ];
 
   return (
     <div className="group w-16 hover:w-60 bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-700 text-white flex flex-col 
-    h-screen sticky top-0 shadow-xl transition-all duration-300 ease-in-out z-50 overflow-hidden">
+    h-screen sticky top-0 shadow-xl transition-all duration-300 ease-in-out z-50 overflow-hidden select-none">
       
       {/* 1. Sección superior (Título) - Fijo */}
       <div className="shrink-0">
@@ -34,11 +34,6 @@ const Sidebar = ({ selected, setSelected }) => {
       </div>
 
       {/* 2. Lista de Menú - Flexible y Scrolleable */}
-      {/* MODIFICACIÓN SCROLLBAR:
-          - [&::-webkit-scrollbar]:w-0  -> Oculto por defecto (ancho 0)
-          - group-hover:[&::-webkit-scrollbar]:w-1.5 -> Visible al expandir (ancho delgado)
-          - Estilización del track y thumb para que sea estético y redondeado.
-      */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 
         [&::-webkit-scrollbar]:w-0 
         group-hover:[&::-webkit-scrollbar]:w-1.5
@@ -57,7 +52,6 @@ const Sidebar = ({ selected, setSelected }) => {
               }`}
               onClick={() => setSelected(item.key)}
             >
-              {/* Aseguramos que el icono no se encoja */}
               <span className="material-icons text-xl min-w-[24px] text-center">{item.icon}</span>
               <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
                 {item.label}

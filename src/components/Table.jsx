@@ -54,7 +54,7 @@ const Table = ({
   const sortedData = [...data].sort((a, b) => a.id - b.id);
 
   return (
-    <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white">
+    <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white select-none">
       <table className="w-full bg-white">
         <thead>
           <tr className="bg-blue-500 text-white text-sm uppercase tracking-wide">

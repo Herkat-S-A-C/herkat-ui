@@ -189,7 +189,7 @@ const AdminPage = () => {
       <div className="flex-1 p-6">
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-gray-800 select-none">
               {titleMap[selected] || selected}
             </h1>
 
