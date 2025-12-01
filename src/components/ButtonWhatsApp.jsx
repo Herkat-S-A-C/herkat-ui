@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { getSocialMedia } from "/src/services/socialMediaService";
+import { getSocialMedia } from "/src/services/socialMediaServices";
 
 function ButtonWhatsApp() {
   const [whatsappUrl, setWhatsappUrl] = useState("");

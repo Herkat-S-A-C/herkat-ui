@@ -1,8 +1,7 @@
-// src/services/servicesService.js
 import axios from "axios";
 
-// ✅ URL base de la API
-const API_BASE_URL = "https://herkat-api.onrender.com/api/v1/service-items";
+// ✅ URL base de la API V2 para Servicios
+const API_BASE_URL = "https://herkat-v2-api.onrender.com/api/v1/service-items";
 
 // ✅ Instancia de Axios
 const api = axios.create({
@@ -16,10 +15,10 @@ const handleError = (error, message) => {
 };
 
 // 📌 Obtener todos los servicios
+// Endpoint: /all
 export const getAllServices = async () => {
   try {
-    // ❗ Sin "/" final → queda exactamente /api/v1/service-items
-    const { data } = await api.get("");
+    const { data } = await api.get("/all");
     return data;
   } catch (error) {
     handleError(error, "Error al obtener los servicios:");
@@ -27,29 +26,21 @@ export const getAllServices = async () => {
 };
 
 // 📌 Obtener servicio por ID
+// Endpoint: /{id}/details
 export const getServiceById = async (id) => {
   try {
-    const { data } = await api.get(`/id/${id}`);
+    const { data } = await api.get(`/${id}/details`);
     return data;
   } catch (error) {
     handleError(error, `Error al obtener servicio con ID ${id}:`);
   }
 };
 
-// 📌 Obtener servicio por nombre
-export const getServiceByName = async (name) => {
-  try {
-    const { data } = await api.get(`/name/${encodeURIComponent(name)}`);
-    return data;
-  } catch (error) {
-    handleError(error, `Error al obtener servicio con nombre ${name}:`);
-  }
-};
-
-// 📌 Crear un nuevo servicio (admin)
+// 📌 Crear un nuevo servicio
+// Endpoint: /new
 export const createService = async (formData) => {
   try {
-    const { data } = await api.post("", formData, {
+    const { data } = await api.post("/new", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data;
@@ -58,10 +49,11 @@ export const createService = async (formData) => {
   }
 };
 
-// 📌 Actualizar un servicio por ID (admin)
+// 📌 Actualizar un servicio por ID
+// Endpoint: /update/{id}
 export const updateService = async (id, formData) => {
   try {
-    const { data } = await api.put(`/${id}`, formData, {
+    const { data } = await api.put(`/update/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data;
@@ -70,10 +62,11 @@ export const updateService = async (id, formData) => {
   }
 };
 
-// 📌 Eliminar un servicio (admin)
+// 📌 Eliminar un servicio
+// Endpoint: /delete/{id}
 export const deleteService = async (id) => {
   try {
-    const { data } = await api.delete(`/${id}`);
+    const { data } = await api.delete(`/delete/${id}`);
     return data;
   } catch (error) {
     handleError(error, `Error al eliminar servicio con ID ${id}:`);

@@ -15,8 +15,9 @@ const FormFields = ({
       {fields.map((field) => {
         const id = `field-${field.name}`;
 
-        // === Inputs básicos: text / number / url
-        if (["text", "number", "url"].includes(field.type)) {
+        // === Inputs básicos: text / number / url / email / tel
+        // 🔹 CORRECCIÓN: Agregamos "email" y "tel" para soportar los campos de Cliente
+        if (["text", "number", "url", "email", "tel"].includes(field.type)) {
           return (
             <div
               key={field.name}
@@ -33,6 +34,9 @@ const FormFields = ({
                 onChange={handleChange}
                 placeholder={field.placeholder || ""}
                 readOnly={!!field.readonly}
+                // 🔹 CORRECCIÓN: Agregamos maxLength y required dinámicos
+                maxLength={field.maxLength} 
+                required={field.required}
                 className="w-full rounded-lg bg-gray-50 border border-gray-300 text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -56,6 +60,8 @@ const FormFields = ({
                 onChange={handleChange}
                 placeholder={field.placeholder || ""}
                 rows={3}
+                // 🔹 También agregamos maxLength aquí por si acaso
+                maxLength={field.maxLength}
                 className="w-full rounded-lg bg-gray-50 border border-gray-300 text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -87,6 +93,7 @@ const FormFields = ({
                 name={field.name}
                 value={form[field.name] ?? ""}
                 onChange={handleChange}
+                required={field.required} // 🔹 Select requerido
                 className="w-full rounded-lg bg-gray-50 border border-gray-300 text-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">{`Seleccione ${field.label}`}</option>

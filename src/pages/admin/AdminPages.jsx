@@ -4,15 +4,20 @@ import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
 import InventoryChart from "/src/components/InventoryChart";
 
-// Servicios
-import { getSocialMedia } from "/src/services/socialMediaService.js";
-import { getAllProducts, deleteProduct } from "/src/services/productsService.js";
-import { getAllServices, deleteService } from "/src/services/servicesService.js";
-import { getAllMachines, deleteMachine } from "/src/services/machineryService.js";
+// Servicios Existentes (Corregidos a Plural)
+import { getSocialMedia } from "/src/services/socialMediaServices.js";
+import { getAllProducts, deleteProduct } from "/src/services/productsServices.js";
+import { getAllServices, deleteService } from "/src/services/servicesServices.js";
+import { getAllMachines, deleteMachine } from "/src/services/machineryServices.js";
 import { getAllBanners, deleteBanner } from "/src/services/bannerServices.js";
 import { getAllMachineTypes, deleteMachineType } from "/src/services/typeMachineryServices.js";
 import { getAllProductTypes, deleteProductType } from "/src/services/typeProductsServices.js";
 import { getAllServiceTypes, deleteServiceType } from "/src/services/typeServicesServices.js";
+
+// 🔹 NUEVOS SERVICIOS CONECTADOS (Corregidos a Plural)
+import { getAllClients, deleteClient } from "/src/services/clientServices.js";
+// Usamos el servicio de Balance para el gráfico de stock
+import { getAllInventoryBalances } from "/src/services/inventoryBalanceServices.js";
 
 const AdminPage = () => {
   const [data, setData] = useState({
@@ -21,6 +26,8 @@ const AdminPage = () => {
     servicios: [],
     maquinaria: [],
     sociales: [],
+    clientes: [], // 🔹 Estado para clientes
+    inventario: [], // 🔹 Estado para el balance de inventario
     ProductosTipos: [],
     ServiciosTipos: [],
     MaquinariaTipos: [],
@@ -32,6 +39,7 @@ const AdminPage = () => {
     maquinaria: "Maquinaria",
     banner: "Banners",
     sociales: "Redes sociales",
+    clientes: "Clientes", // 🔹 Título clientes
     ProductosTipos: "Tipos de productos",
     ServiciosTipos: "Tipos de servicios",
     MaquinariaTipos: "Tipos de maquinaria",
@@ -47,6 +55,7 @@ const AdminPage = () => {
       servicios: deleteService,
       maquinaria: deleteMachine,
       banner: deleteBanner,
+      clientes: deleteClient, // 🔹 Eliminar cliente
     }),
     []
   );
@@ -63,6 +72,8 @@ const AdminPage = () => {
       maquinaria: getAllMachines,
       banner: getAllBanners,
       sociales: getSocialMedia,
+      clientes: getAllClients, // 🔹 Obtener clientes
+      inventario: getAllInventoryBalances, // 🔹 Obtener balance de inventario (Stock Actual)
       ProductosTipos: getAllProductTypes,
       ServiciosTipos: getAllServiceTypes,
       MaquinariaTipos: getAllMachineTypes,
@@ -75,7 +86,8 @@ const AdminPage = () => {
       try {
         if (serviceMap[type]) {
           const res = await serviceMap[type]();
-          setData((prev) => ({ ...prev, [type]: res }));
+          // Aseguramos que res sea un array antes de guardar, por seguridad
+          setData((prev) => ({ ...prev, [type]: Array.isArray(res) ? res : [] }));
         }
       } catch (error) {
         console.error(`Error cargando datos de ${type}:`, error);
@@ -102,11 +114,13 @@ const AdminPage = () => {
 
   useEffect(() => {
     fetchData(selected);
+    // Carga de dependencias para cruzar nombres (Tipos)
     fetchData("ProductosTipos");
     fetchData("ServiciosTipos");
     fetchData("MaquinariaTipos");
   }, [selected, fetchData]);
 
+  // Función para procesar la data y agregar nombres de tipos (relaciones)
   const getDataWithTypeNames = () => {
     let items = Array.isArray(data[selected]) ? [...data[selected]] : [];
 
@@ -134,24 +148,34 @@ const AdminPage = () => {
     return items;
   };
 
+  // Filtrado para el buscador
   const filteredData = getDataWithTypeNames().filter((item) => {
     const nameKey = item.title || item.nombre || item.name || "";
     const typeKey = item.tipoNombre || "";
+    const emailKey = item.email || ""; // Para buscar clientes por email
     const idKey = String(item.id || "");
+
     return (
       nameKey.toLowerCase().includes(search.toLowerCase()) ||
       typeKey.toLowerCase().includes(search.toLowerCase()) ||
+      emailKey.toLowerCase().includes(search.toLowerCase()) ||
       idKey.toLowerCase().includes(search.toLowerCase())
     );
   });
 
-  // 🔹 Data simulada para Inventario
-  const mockInventoryData = [
-    { nombre: "Producto A", stock: 50 },
-    { nombre: "Producto B", stock: 30 },
-    { nombre: "Producto C", stock: 70 },
-    { nombre: "Producto D", stock: 15 },
-  ];
+  // 🔹 PROCESAMIENTO DE DATOS REALES DE INVENTARIO PARA EL GRÁFICO
+  const realInventoryData = (data.inventario || []).map((item) => {
+    // Adaptamos la respuesta de la API al formato del gráfico
+    // Intenta buscar el nombre en item.product.name o item.productName
+    const nombreProducto = item.product?.name || item.productName || item.nombre || "Item";
+    // Intenta buscar la cantidad en item.balance, item.quantity o item.stock
+    const stockCantidad = Number(item.balance || item.quantity || item.stock || item.currentQuantity || 0);
+
+    return {
+      nombre: nombreProducto,
+      stock: stockCantidad
+    };
+  });
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -163,7 +187,7 @@ const AdminPage = () => {
             {titleMap[selected] || selected}
           </h1>
 
-          {/* 🔹 No mostrar buscador ni botón en Inventario */}
+          {/* 🔹 Ocultar buscador y botón 'Registrar' en Inventario */}
           {selected !== "sociales" && selected !== "inventario" && (
             <div className="flex gap-4 items-center">
               <div className="relative group transition-all duration-500 ease-out">
@@ -174,7 +198,7 @@ const AdminPage = () => {
                   type="text"
                   placeholder="Buscar..."
                   className="pl-10 pr-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white outline-none transition-all duration-500 ease-out
-                   w-40 group-hover:w-80 focus-within:w-80"
+                    w-40 group-hover:w-80 focus-within:w-80"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -193,8 +217,9 @@ const AdminPage = () => {
           )}
         </div>
 
-        {/* 🔹 Mostrar tabla excepto en Inventario */}
-        {selected !== "inventario" && (
+        {/* 🔹 Lógica de renderizado principal */}
+        {selected !== "inventario" ? (
+          // Si NO es inventario, mostramos la Tabla (Productos, Clientes, Maquinaria, etc.)
           <Table
             data={filteredData}
             type={selected}
@@ -204,13 +229,12 @@ const AdminPage = () => {
             }}
             onDelete={handleDelete}
           />
+        ) : (
+          // 🔹 Si ES inventario, mostramos el Gráfico con data real
+          <InventoryChart productos={realInventoryData} />
         )}
 
-        {/* 🔹 Mostrar gráfico en Inventario */}
-        {selected === "inventario" && (
-          <InventoryChart productos={mockInventoryData} />
-        )}
-
+        {/* Modal de formulario (se oculta si es inventario, ya que el inventario es lectura) */}
         {modalOpen && selected !== "inventario" && (
           <ModalForm
             type={selected}

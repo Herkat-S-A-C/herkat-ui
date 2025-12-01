@@ -4,34 +4,46 @@ import { motion } from "framer-motion";
 import { formConfig } from "../constants/formConfig";
 import FormFields from "./FormFields";
 
-// Servicios API
+// ----------------------------------------------------
+// 🔹 SERVICIOS API (Todos en Plural + Services)
+// ----------------------------------------------------
+
 import {
   getSocialMedia,
   updateSocialMedia,
-} from "../services/socialMediaService";
+} from "../services/socialMediaServices";
+
 import {
   getAllProductTypes,
   createProductType,
   updateProductType,
 } from "../services/typeProductsServices";
+
 import {
   getAllMachineTypes,
   createMachineType,
   updateMachineType,
 } from "../services/typeMachineryServices";
+
 import {
   getAllServiceTypes,
   createServiceType,
   updateServiceType,
 } from "../services/typeServicesServices";
-import { createProduct, updateProduct } from "../services/productsService";
-import { createMachine, updateMachine } from "../services/machineryService";
-import { createService, updateService } from "../services/servicesService";
+
+import { createProduct, updateProduct } from "../services/productsServices";
+import { createMachine, updateMachine } from "../services/machineryServices";
+import { createService, updateService } from "../services/servicesServices";
 import { createBanner, updateBanner } from "../services/bannerServices";
+import { createClient, updateClient } from "../services/clientServices";
+
+// Nota: No importamos servicios de inventario aquí porque el stock se gestiona
+// externamente mediante movimientos, y el balance inicial es 0 automático.
 
 const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
   const isBanner = type === "banner";
   const isSocial = type === "sociales";
+  const isClient = type === "clientes";
   const isTypeForm = ["ProductosTipos", "ServiciosTipos", "MaquinariaTipos"].includes(type);
 
   const [form, setForm] = useState({});
@@ -99,10 +111,17 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
     if (item && !isSocial) {
       setForm({
         id: item.id || "",
-        nombre: item.name || "",
+        nombre: item.name || item.nombre || "",
+        
+        // 🔹 Campos de Cliente (Mapeo de la entidad Java)
+        email: item.email || "",
+        telefono: item.phone || item.telefono || "",
+        direccion: item.address || item.direccion || "",
+
+        // Mapeo general
         tipo: item.typeId || item.tipo || "",
         capacidad: item.capacity || "",
-        stock: item.stock || "", // 👈 stock agregado
+        // Stock: Eliminado (se maneja por balance)
         descripcion: item.description || "",
         imagen: item.imageUrl || "",
         file: null,
@@ -118,12 +137,13 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         url: item.url || "",
       });
     } else if (!item && !isSocial) {
-      const newId = ["productos", "maquinaria", "servicios"].includes(type)
+      const newId = ["productos", "maquinaria", "servicios", "clientes"].includes(type)
         ? ""
         : lastId
           ? String(Number(lastId) + 1)
           : "1";
-      setForm({ id: newId, destacado: false, isFeatured: false, stock: "" }); // 👈 inicializar stock
+      // Inicialización limpia
+      setForm({ id: newId, destacado: false, isFeatured: false });
     }
   }, [item, lastId, type, isSocial]);
 
@@ -171,6 +191,31 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         return onClose();
       }
 
+      // 🔹 CLIENTES (Actualizado según Client.java)
+      if (isClient) {
+        // Validaciones obligatorias (nullable = false en Java)
+        if (!form.nombre?.trim()) return alert("El nombre es obligatorio");
+        if (!form.email?.trim()) return alert("El email es obligatorio");
+
+        const formData = new FormData();
+        
+        // Backend espera: name, email, phone, address
+        formData.append("name", form.nombre);
+        formData.append("email", form.email);
+        
+        // Campos opcionales (nullable = true)
+        formData.append("phone", form.telefono || "");
+        formData.append("address", form.direccion || "");
+
+        if (item) {
+          await updateClient(form.id, formData);
+        } else {
+          await createClient(formData);
+        }
+        onSave?.();
+        return onClose();
+      }
+
       // TIPOS
       if (type === "ProductosTipos") {
         if (!form.nombre?.trim()) return alert("Completa el nombre del tipo");
@@ -214,7 +259,9 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         if (!item || form.nombre !== item.name) formData.append("name", form.nombre);
         formData.append("typeId", form.tipo);
         formData.append("capacity", parseFloat(form.capacidad) || 0);
-        formData.append("stock", parseInt(form.stock) || 0); // 👈 stock agregado
+        
+        // Stock eliminado (se gestiona por Balance y Movimientos)
+        
         formData.append("description", form.descripcion || "");
         formData.append("isFeatured", form.isFeatured ? "true" : "false");
         if (form.file) formData.append("image", form.file);
@@ -293,11 +340,36 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
       ? [{ name: "nombre", label: typeLabels[type], type: "text", required: true }]
       : (formConfig[type] || formConfig[normalizedType] || []);
 
-  // 👉 Agregar el campo stock solo en productos
-  if (type === "productos") {
+  // 🔹 CAMPOS ESPECÍFICOS PARA CLIENTES
+  // Ajustados a las restricciones de la base de datos (length)
+  if (type === "clientes") {
     fields = [
-      ...fields,
-      { name: "stock", label: "Cantidad en stock", type: "number", required: true },
+      { 
+        name: "nombre", 
+        label: "Nombre Completo", 
+        type: "text", 
+        required: true, 
+        maxLength: 50 // @Column(length = 50)
+      },
+      { 
+        name: "email", 
+        label: "Correo Electrónico", 
+        type: "email", 
+        required: true 
+        // @Column(unique = true)
+      },
+      { 
+        name: "telefono", 
+        label: "Teléfono", 
+        type: "tel",
+        maxLength: 20 // @Column(length = 20)
+      },
+      { 
+        name: "direccion", 
+        label: "Dirección", 
+        type: "text",
+        maxLength: 100 // @Column(length = 100)
+      },
     ];
   }
 
@@ -311,7 +383,7 @@ const ModalForm = ({ type, onClose, onSave, item, lastId }) => {
         className="bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 w-[420px] max-h-[90vh] overflow-auto"
       >
         <h2 className="text-xl font-bold text-gray-800 text-center mb-4">
-          {item ? "Editar" : "Registrar"} {type}
+          {item ? "Editar" : "Registrar"} {type === 'clientes' ? 'Cliente' : type}
         </h2>
 
         <FormFields

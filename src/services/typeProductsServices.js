@@ -1,70 +1,77 @@
-// src/services/typeProductsServices.js
 import axios from "axios";
 
-const BASE_URL = "https://herkat-api.onrender.com/api/v1/product-types";
+// ✅ URL base de la API V2 para Tipos de Productos
+// Corrección: Cambiado a 'product-types' (singular) para coincidir con la convención de 'machine-types'
+// y evitar el error 500 del servidor.
+const API_BASE_URL = "https://herkat-v2-api.onrender.com/api/v1/product-types";
 
-// Obtener todos los tipos de producto
+// ✅ Instancia de Axios
+const api = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// 📌 Función auxiliar para manejar errores
+const handleError = (error, message) => {
+  console.error(message, error?.response?.data || error.message);
+  throw error;
+};
+
+// 📌 Obtener todos los tipos de productos
+// Endpoint: /all
 export const getAllProductTypes = async () => {
   try {
-    const response = await axios.get(BASE_URL);
-    return response.data;
+    const { data } = await api.get("/all");
+    return data;
   } catch (error) {
-    console.error("Error al obtener todos los tipos de producto:", error);
-    throw error;
+    handleError(error, "Error al obtener todos los tipos de productos:");
   }
 };
 
-// Obtener un tipo de producto por ID
+// 📌 Obtener detalle de un tipo de producto por ID
+// Endpoint: /{id}/details
 export const getProductTypeById = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${id}`);
-    return response.data;
+    const { data } = await api.get(`/${id}/details`);
+    return data;
   } catch (error) {
-    console.error(`Error al obtener el tipo de producto con ID ${id}:`, error);
-    throw error;
+    handleError(error, `Error al obtener el tipo de producto con ID ${id}:`);
   }
 };
 
-// Obtener un tipo de producto por nombre
-export const getProductTypeByName = async (name) => {
+// 📌 Crear un nuevo tipo de producto
+// Endpoint: /new
+export const createProductType = async (productTypeData) => {
   try {
-    const response = await axios.get(`${BASE_URL}?name=${name}`);
-    return response.data;
+    // Se asume envío en formato JSON para tipos
+    const { data } = await api.post("/new", productTypeData, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return data;
   } catch (error) {
-    console.error(`Error al obtener el tipo de producto con nombre ${name}:`, error);
-    throw error;
+    handleError(error, "Error al crear un nuevo tipo de producto:");
   }
 };
 
-// Crear un nuevo tipo de producto
-export const createProductType = async (data) => {
+// 📌 Actualizar un tipo de producto por ID
+// Endpoint: /update/{id}
+export const updateProductType = async (id, productTypeData) => {
   try {
-    const response = await axios.post(BASE_URL, data);
-    return response.data;
+    const { data } = await api.put(`/update/${id}`, productTypeData, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return data;
   } catch (error) {
-    console.error("Error al crear un tipo de producto:", error);
-    throw error;
+    handleError(error, `Error al actualizar el tipo de producto con ID ${id}:`);
   }
 };
 
-// Actualizar un tipo de producto por ID
-export const updateProductType = async (id, data) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/${id}`, data);
-    return response.data;
-  } catch (error) {
-    console.error(`Error al actualizar el tipo de producto con ID ${id}:`, error);
-    throw error;
-  }
-};
-
-// Eliminar un tipo de producto por ID
+// 📌 Eliminar un tipo de producto por ID
+// Endpoint: /delete/{id}
 export const deleteProductType = async (id) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/${id}`);
-    return response.data;
+    const { data } = await api.delete(`/delete/${id}`);
+    return data;
   } catch (error) {
-    console.error(`Error al eliminar el tipo de producto con ID ${id}:`, error);
-    throw error;
+    handleError(error, `Error al eliminar el tipo de producto con ID ${id}:`);
   }
 };
