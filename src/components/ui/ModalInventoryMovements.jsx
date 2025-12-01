@@ -96,10 +96,8 @@ const ModalInventoryMovements = ({ item, onClose }) => {
     try {
       if (editingId) {
         await updateInventoryMovement(editingId, payload);
-        alert("Movimiento actualizado correctamente");
       } else {
         await createInventoryMovement(payload);
-        alert("Movimiento registrado correctamente");
       }
       setEditingId(null);
       setForm({ type: "IN", quantity: "" }); // Resetear form

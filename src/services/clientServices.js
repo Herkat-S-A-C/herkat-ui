@@ -36,7 +36,7 @@ export const getClientById = async (id) => {
 export const createClient = async (formData) => {
   try {
     const { data } = await api.post("/new", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "application/json" },
     });
     return data;
   } catch (error) {
@@ -48,7 +48,7 @@ export const createClient = async (formData) => {
 export const updateClient = async (id, formData) => {
   try {
     const { data } = await api.put(`/update/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "application/json" },
     });
     return data;
   } catch (error) {
