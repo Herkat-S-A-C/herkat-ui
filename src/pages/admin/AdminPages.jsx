@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Sidebar from "/src/components/Sidebar";
 import Table from "/src/components/Table";
 import ModalForm from "/src/components/ModalForm";
-import InventoryChart from "/src/components/InventoryChart";
+// ❌ Gráfico eliminado
+// import InventoryChart from "/src/components/InventoryChart";
 
 // Servicios Existentes (Corregidos a Plural)
 import { getSocialMedia } from "/src/services/socialMediaServices.js";
@@ -16,7 +17,7 @@ import { getAllServiceTypes, deleteServiceType } from "/src/services/typeService
 
 // 🔹 NUEVOS SERVICIOS CONECTADOS (Corregidos a Plural)
 import { getAllClients, deleteClient } from "/src/services/clientServices.js";
-// Usamos el servicio de Balance para el gráfico de stock
+// Usamos el servicio de Balance para mostrar el stock en la tabla
 import { getAllInventoryBalances } from "/src/services/inventoryBalanceServices.js";
 
 const AdminPage = () => {
@@ -43,7 +44,7 @@ const AdminPage = () => {
     ProductosTipos: "Tipos de productos",
     ServiciosTipos: "Tipos de servicios",
     MaquinariaTipos: "Tipos de maquinaria",
-    inventario: "Inventario", // 🔹 nueva opción
+    inventario: "Inventario General", // 🔹 Título inventario
   };
 
   const deleteMap = useMemo(
@@ -145,6 +146,17 @@ const AdminPage = () => {
       });
     }
 
+    // 🔹 IMPORTANTE: Preparar datos de inventario para la tabla y el buscador
+    if (selected === "inventario") {
+      items = items.map((inv) => ({
+        ...inv,
+        // Extraemos el nombre para que el buscador (filteredData) lo encuentre
+        name: inv.item?.name || inv.itemName || "Producto sin nombre",
+        // Aseguramos que stock esté disponible en el nivel superior si Table.jsx lo busca así
+        stock: inv.currentQuantity 
+      }));
+    }
+
     return items;
   };
 
@@ -163,20 +175,6 @@ const AdminPage = () => {
     );
   });
 
-  // 🔹 PROCESAMIENTO DE DATOS REALES DE INVENTARIO PARA EL GRÁFICO
-  const realInventoryData = (data.inventario || []).map((item) => {
-    // Adaptamos la respuesta de la API al formato del gráfico
-    // Intenta buscar el nombre en item.product.name o item.productName
-    const nombreProducto = item.product?.name || item.productName || item.nombre || "Item";
-    // Intenta buscar la cantidad en item.balance, item.quantity o item.stock
-    const stockCantidad = Number(item.balance || item.quantity || item.stock || item.currentQuantity || 0);
-
-    return {
-      nombre: nombreProducto,
-      stock: stockCantidad
-    };
-  });
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar selected={selected} setSelected={setSelected} />
@@ -187,8 +185,8 @@ const AdminPage = () => {
             {titleMap[selected] || selected}
           </h1>
 
-          {/* 🔹 Ocultar buscador y botón 'Registrar' en Inventario */}
-          {selected !== "sociales" && selected !== "inventario" && (
+          {/* 🔹 Mostrar buscador en todos lados menos en 'sociales' */}
+          {selected !== "sociales" && (
             <div className="flex gap-4 items-center">
               <div className="relative group transition-all duration-500 ease-out">
                 <span className="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -204,37 +202,34 @@ const AdminPage = () => {
                 />
               </div>
 
-              <button
-                className="bg-blue-500 text-white font-bold px-8 py-3 rounded-xl shadow-md transform transition-all duration-200 hover:scale-[1.15] hover:shadow-lg"
-                onClick={() => {
-                  setModalOpen(true);
-                  setEditItem(null);
-                }}
-              >
-                Registrar
-              </button>
+              {/* El botón registrar se oculta en inventario (es de solo lectura o automático) */}
+              {selected !== "inventario" && (
+                <button
+                  className="bg-blue-500 text-white font-bold px-8 py-3 rounded-xl shadow-md transform transition-all duration-200 hover:scale-[1.15] hover:shadow-lg"
+                  onClick={() => {
+                    setModalOpen(true);
+                    setEditItem(null);
+                  }}
+                >
+                  Registrar
+                </button>
+              )}
             </div>
           )}
         </div>
 
-        {/* 🔹 Lógica de renderizado principal */}
-        {selected !== "inventario" ? (
-          // Si NO es inventario, mostramos la Tabla (Productos, Clientes, Maquinaria, etc.)
-          <Table
-            data={filteredData}
-            type={selected}
-            onEdit={(item) => {
-              setEditItem(item);
-              setModalOpen(true);
-            }}
-            onDelete={handleDelete}
-          />
-        ) : (
-          // 🔹 Si ES inventario, mostramos el Gráfico con data real
-          <InventoryChart productos={realInventoryData} />
-        )}
+        {/* 🔹 Renderizado de Tabla para TODOS los apartados (incluido Inventario y Clientes) */}
+        <Table
+          data={filteredData}
+          type={selected}
+          onEdit={(item) => {
+            setEditItem(item);
+            setModalOpen(true);
+          }}
+          onDelete={handleDelete}
+        />
 
-        {/* Modal de formulario (se oculta si es inventario, ya que el inventario es lectura) */}
+        {/* Modal de formulario (se oculta si es inventario) */}
         {modalOpen && selected !== "inventario" && (
           <ModalForm
             type={selected}
