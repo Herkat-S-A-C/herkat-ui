@@ -185,7 +185,7 @@ function Catalog() {
       <div className="min-h-screen bg-gray-100">
         {/* Título + barra de búsqueda */}
         <div className="px-4 md:px-6 pt-8 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold capitalize">{type}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold capitalize select-none">{type}</h1>
 
           <input
             type="text"
@@ -200,7 +200,7 @@ function Catalog() {
           <>
             {Object.entries(groupedItems).map(([subtipo, itemsSubgrupo]) => (
               <section className="mb-12 bg-gray-100" key={subtipo}>
-                <h2 className="px-[60px] text-lg md:text-xl font-semibold text-gray-800 mb-3 capitalize">
+                <h2 className="px-[60px] text-lg md:text-xl font-semibold text-gray-800 mb-3 capitalize select-none">
                   {subtipo}
                 </h2>
 
@@ -214,9 +214,9 @@ function Catalog() {
                   </button>
 
                   {/* Carrusel */}
-                  <div
+                  <div 
                     ref={(el) => (scrollRefs.current[subtipo] = el)}
-                    className="pt-4 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full pl-[20px] pr-[20px]"
+                    className="pt-4 flex overflow-x-auto overflow-y-hidden gap-6 scroll-smooth no-scrollbar w-full pl-[20px] pr-[20px] select-none"
                   >
                     {itemsSubgrupo.map((item) => (
                       <div

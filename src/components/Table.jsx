@@ -1,4 +1,10 @@
-const Table = ({ data, type, onEdit, onDelete }) => {
+const Table = ({ 
+  data, 
+  type, 
+  onEdit, 
+  onDelete, 
+  onViewMovements = () => {} // 🔹 Valor por defecto para evitar errores si no se pasa la función
+}) => {
   const isTipo = ["ProductosTipos", "ServiciosTipos", "MaquinariaTipos"].includes(type);
   const isSociales = type === "sociales";
   const isBanner = type === "banner";
@@ -12,8 +18,9 @@ const Table = ({ data, type, onEdit, onDelete }) => {
     if (isSociales) return 4; // ID, Tipo, URL, Acciones
     if (isBanner) return 4; // ID, Nombre, Imagen, Acciones
     if (isClient) return 6; // ID, Nombre, Email, Tel, Dir, Acciones
-    if (isInventory) return 5; // ID, Item, Stock, Fecha, Acciones
-    if (isDestacadoType) return type === "productos" ? 7 : 6; // ID, Nom, Tipo, (Cap), Desc, Dest, Img, Acciones
+    // ID, ItemId, Nombre, Tipo, Stock, Fecha, Acciones = 7
+    if (isInventory) return 7; 
+    if (isDestacadoType) return type === "productos" ? 7 : 6;
     return 6;
   };
 
@@ -23,7 +30,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
         <thead>
           <tr className="bg-blue-500 text-white text-sm uppercase tracking-wide">
             <th className="px-4 py-2 text-left">ID</th>
-            {/* Headers dinámicos según el tipo (misma lógica que abajo) */}
+            {/* Headers dinámicos según el tipo */}
             <th className="px-4 py-2 text-left">...</th>
           </tr>
         </thead>
@@ -47,7 +54,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
   const sortedData = [...data].sort((a, b) => a.id - b.id);
 
   return (
-    <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white">
+    <div className="overflow-hidden rounded-2xl shadow-md border border-gray-300 bg-white select-none">
       <table className="w-full bg-white">
         <thead>
           <tr className="bg-blue-500 text-white text-sm uppercase tracking-wide">
@@ -67,7 +74,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
             {/* --- BANNER --- */}
             {isBanner && <th className="px-4 py-2 text-left">Nombre</th>}
 
-            {/* --- CLIENTES (Nuevo) --- */}
+            {/* --- CLIENTES --- */}
             {isClient && (
               <>
                 <th className="px-4 py-2 text-left">Nombre</th>
@@ -77,12 +84,14 @@ const Table = ({ data, type, onEdit, onDelete }) => {
               </>
             )}
 
-            {/* --- INVENTARIO (Nuevo - Tabla) --- */}
+            {/* --- INVENTARIO (Actualizado con atributos DTO) --- */}
             {isInventory && (
               <>
-                <th className="px-4 py-2 text-left">Ítem / Producto</th>
-                <th className="px-4 py-2 text-left">Stock Actual</th>
-                <th className="px-4 py-2 text-left">Última Act.</th>
+                <th className="px-4 py-2 text-left">ID Ítem</th>
+                <th className="px-4 py-2 text-left">Nombre</th>
+                <th className="px-4 py-2 text-left">Tipo</th>
+                <th className="px-4 py-2 text-left">Stock</th>
+                <th className="px-4 py-2 text-left">Actualizado</th>
               </>
             )}
 
@@ -97,7 +106,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
               </>
             )}
 
-            {/* Columna Imagen (Banner y Items Principales) */}
+            {/* Columna Imagen */}
             {!isTipo && !isSociales && !isClient && !isInventory && (
               <th className="px-4 py-2 text-left">Imagen</th>
             )}
@@ -109,6 +118,7 @@ const Table = ({ data, type, onEdit, onDelete }) => {
         <tbody>
           {sortedData.map((item) => (
             <tr key={item.id} className="hover:bg-gray-50 transition-colors text-sm">
+              {/* ID del Registro (Balance ID) */}
               <td className="px-4 py-2 border-b">{item.id}</td>
 
               {/* --- TIPOS --- */}
@@ -142,10 +152,25 @@ const Table = ({ data, type, onEdit, onDelete }) => {
               {/* --- INVENTARIO --- */}
               {isInventory && (
                 <>
-                  <td className="px-4 py-2 border-b font-medium">
-                    {/* Intentamos obtener el nombre del producto anidado o directo */}
-                    {item.item?.name || item.itemName || item.productName || "—"}
+                  {/* itemId */}
+                  <td className="px-4 py-2 border-b text-gray-600">
+                    {item.itemId || "—"}
                   </td>
+                  
+                  {/* itemName */}
+                  <td className="px-4 py-2 border-b font-medium">
+                    {/* Priorizamos itemName del DTO, fallback al mapeo manual */}
+                    {item.itemName || item.name || "—"}
+                  </td>
+
+                  {/* itemType */}
+                  <td className="px-4 py-2 border-b">
+                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs uppercase font-semibold">
+                      {item.itemType || "—"}
+                    </span>
+                  </td>
+
+                  {/* currentQuantity */}
                   <td className="px-4 py-2 border-b">
                     <span
                       className={`px-2 py-1 rounded-full font-bold text-xs ${
@@ -154,12 +179,14 @@ const Table = ({ data, type, onEdit, onDelete }) => {
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {item.currentQuantity || item.stock || 0}
+                      {item.currentQuantity ?? item.stock ?? 0}
                     </span>
                   </td>
-                  <td className="px-4 py-2 border-b text-gray-500">
+
+                  {/* lastUpdated */}
+                  <td className="px-4 py-2 border-b text-gray-500 text-xs">
                     {item.lastUpdated
-                      ? new Date(item.lastUpdated).toLocaleDateString()
+                      ? new Date(item.lastUpdated).toLocaleString()
                       : "—"}
                   </td>
                 </>
@@ -209,7 +236,25 @@ const Table = ({ data, type, onEdit, onDelete }) => {
 
               {/* --- ACCIONES --- */}
               <td className="px-4 py-2 border-b text-center space-x-2 whitespace-nowrap">
-                {/* Botón Editar: Oculto para Inventario (solo lectura/movimientos) */}
+                
+                {/* 🔹 Botón Movimientos (Solo para Inventario) */}
+                {isInventory && (
+                  <button
+                    onClick={() => {
+                      // 🔹 Verificación de seguridad antes de ejecutar la función
+                      if (typeof onViewMovements === 'function') {
+                        onViewMovements(item);
+                      } else {
+                        console.error("onViewMovements no es una función válida o no fue pasada como prop");
+                      }
+                    }}
+                    className="px-3 py-1 rounded-full text-blue-700 bg-blue-100 hover:bg-blue-200 transform transition-transform duration-200 hover:scale-[1.10] text-xs font-semibold"
+                  >
+                    Movimientos
+                  </button>
+                )}
+
+                {/* Botón Editar: Oculto para Inventario si es solo lectura */}
                 {!isInventory && (
                   <button
                     onClick={() => onEdit(item)}
