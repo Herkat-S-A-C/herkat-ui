@@ -13,16 +13,17 @@ const Sidebar = ({ selected, setSelected }) => {
     { key: "productos", label: "Productos", icon: "shopping_bag" },
     { key: "servicios", label: "Servicios", icon: "build" },
     { key: "maquinaria", label: "Maquinaria", icon: "precision_manufacturing" },
+    { key: "clientes", label: "Clientes", icon: "group" }, // 🔹 Nuevo apartado agregado
     { key: "ProductosTipos", label: "Tipos de Productos", icon: "category" },
     { key: "ServiciosTipos", label: "Tipos de Servicio", icon: "design_services" },
     { key: "MaquinariaTipos", label: "Tipos de Maquinaria", icon: "construction" },
-    { key: "inventario", label: "Inventario", icon: "inventory_2" },
+    { key: "inventario", label: "Inventario", icon: "inventory_2" }, // 🔹 Ya conectado a datos reales en AdminPage
     { key: "sociales", label: "Sociales", icon: "share" }
   ];
 
   return (
     <div className="group w-16 hover:w-60 bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-700 text-white flex flex-col justify-between
-    h-screen sticky top-0 shadow-xl transition-all duration-300 ease-in-out">
+    h-screen sticky top-0 shadow-xl transition-all duration-300 ease-in-out z-50">
       {/* Sección superior */}
       <div>
         <h2 className="text-lg font-bold p-4 text-center border-b border-blue-500/50 whitespace-nowrap opacity-0 group-hover:opacity-100

@@ -9,9 +9,9 @@ import CardService from "../components/CardService";
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
 
 // importacion de servicios
-import { getAllProducts } from "/src/services/productsService.js";
-import { getAllServices } from "/src/services/servicesService.js";
-import { getAllMachines } from "/src/services/machineryService.js";
+import { getAllProducts } from "/src/services/productsServices.js";
+import { getAllServices } from "/src/services/servicesServices.js";
+import { getAllMachines } from "/src/services/machineryServices.js";
 import { getAllBanners } from "/src/services/bannerServices.js";
 
 function Home() {

@@ -1,15 +1,12 @@
-// src/services/productsService.js
 import axios from "axios";
 
-// ✅ URL base de la API
-const API_BASE_URL = "https://herkat-api.onrender.com/api/v1/products";
+// ✅ CAMBIO 1: Nueva URL base (v2)
+const API_BASE_URL = "https://herkat-v2-api.onrender.com/api/v1/products";
 
-// ✅ Instancia de Axios
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// Función auxiliar para manejar errores
 const handleError = (error, message) => {
   console.error(message, error?.response?.data || error.message);
   throw error;
@@ -18,8 +15,8 @@ const handleError = (error, message) => {
 // 📌 Obtener todos los productos
 export const getAllProducts = async () => {
   try {
-    // ❗ Aquí quitamos "/" para que sea exactamente /api/v1/products
-    const { data } = await api.get("");
+    // ✅ CAMBIO: Ruta explícita "/all"
+    const { data } = await api.get("/all");
     return data;
   } catch (error) {
     handleError(error, "Error al obtener los productos:");
@@ -29,27 +26,19 @@ export const getAllProducts = async () => {
 // 📌 Obtener producto por ID
 export const getProductById = async (id) => {
   try {
-    const { data } = await api.get(`/id/${id}`);
+    // ✅ CAMBIO: Ruta explícita "/{id}/details"
+    const { data } = await api.get(`/${id}/details`);
     return data;
   } catch (error) {
     handleError(error, `Error al obtener producto con ID ${id}:`);
   }
 };
 
-// 📌 Obtener producto por nombre
-export const getProductByName = async (name) => {
-  try {
-    const { data } = await api.get(`/name/${encodeURIComponent(name)}`);
-    return data;
-  } catch (error) {
-    handleError(error, `Error al obtener producto con nombre ${name}:`);
-  }
-};
-
 // 📌 Crear un nuevo producto
 export const createProduct = async (formData) => {
   try {
-    const { data } = await api.post("", formData, {
+    // ✅ CAMBIO: Ruta explícita "/new"
+    const { data } = await api.post("/new", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data;
@@ -61,7 +50,8 @@ export const createProduct = async (formData) => {
 // 📌 Actualizar un producto por ID
 export const updateProduct = async (id, formData) => {
   try {
-    const { data } = await api.put(`/${id}`, formData, {
+    // ✅ CAMBIO: Ruta explícita "/update/{id}"
+    const { data } = await api.put(`/update/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data;
@@ -73,7 +63,8 @@ export const updateProduct = async (id, formData) => {
 // 📌 Eliminar un producto
 export const deleteProduct = async (id) => {
   try {
-    const { data } = await api.delete(`/${id}`);
+    // ✅ CAMBIO: Ruta explícita "/delete/{id}"
+    const { data } = await api.delete(`/delete/${id}`);
     return data;
   } catch (error) {
     handleError(error, `Error al eliminar producto con ID ${id}:`);

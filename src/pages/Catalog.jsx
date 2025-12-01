@@ -1,4 +1,3 @@
-// Catalog.jsx
 import Layout from "../components/Layout";
 import CardItem from "../components/CardItem";
 import CardService from "../components/CardService";
@@ -6,10 +5,10 @@ import { useParams } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
 
-// importaciones de servicios
-import { getAllProducts } from "/src/services/productsService.js";
-import { getAllServices } from "/src/services/servicesService.js";
-import { getAllMachines } from "/src/services/machineryService.js";
+// 🔹 CORRECCIÓN: Importaciones de servicios en plural y rutas relativas
+import { getAllProducts } from "../services/productsServices.js";
+import { getAllServices } from "../services/servicesServices.js";
+import { getAllMachines } from "../services/machineryServices.js";
 
 // -------------------- Modal mejorado --------------------
 function Modal({ item, onClose }) {

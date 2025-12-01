@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getSocialMedia } from "/src/services/socialMediaService";
+import { getSocialMedia } from "/src/services/socialMediaServices";
 import { FaFacebookF, FaTiktok, FaWhatsapp, FaEnvelope } from "react-icons/fa";
 
 const iconMap = {
