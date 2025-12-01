@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // ✅ URL base de la API
-const API_BASE_URL = "https://herkat-api.onrender.com/api/v1/social-media";
+const API_BASE_URL = "https://herkat-v2-api.onrender.com/api/v1/social-media";
 
 // ✅ Instancia de Axios
 const api = axios.create({
@@ -15,14 +15,9 @@ const handleError = (error, message) => {
   throw error;
 };
 
-/**
- * 📌 Actualiza una red social por tipo.
- * @param {string} type - Tipo de red social (ej. 'facebook', 'instagram', etc.)
- * @param {Object} data - Datos a actualizar, por ejemplo { url: 'https://...' }
- */
 export const updateSocialMedia = async (type, data) => {
   try {
-    const { data: updated } = await api.put(`/${type}`, data, {
+    const { data: updated } = await api.put(`/update/${type}`, data, {
       headers: { "Content-Type": "application/json" },
     });
     return updated;
@@ -31,13 +26,9 @@ export const updateSocialMedia = async (type, data) => {
   }
 };
 
-/**
- * 📌 Obtiene todas las redes sociales.
- * @returns {Promise<Array>} Lista de redes sociales.
- */
 export const getSocialMedia = async () => {
   try {
-    const { data } = await api.get("");
+    const { data } = await api.get("/all");
     return data;
   } catch (error) {
     handleError(error, "Error al obtener las redes sociales:");
